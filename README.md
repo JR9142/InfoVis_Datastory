@@ -21,7 +21,7 @@ Als je de hoofdpagina wilt aanpassen:
 Als je een nieuwe pagina/hoofdstuk/etc wilt maken, doe dit in plaats van stap 1
 0. Maak een nieuwe branch waar je dit op gaat proberen.
 1. Maak een nieuw ipynb bestand, bijvoorbeeld door een van de bestaande te kopiëren en aan te passen naar wens
-2. VOORDAT JE VERDER GAAT, open '_toc.yml'. Onder 'chapters:', maak een nieuwe line met exact dit "- file: docs/FILENAAM.ipynb"
+2. VOORDAT JE VERDER GAAT, open '_toc.yml'. Onder 'chapters:', maak een nieuwe line met exact dit "- file: docs/FILENAAM"
 ga verder zoals normaal.
 
 
