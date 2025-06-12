@@ -16,5 +16,7 @@ Als je plaatjes of csv's gaat toevoegen:
 3. Run via terminal weer 'jupyter-book build .' evt met --all tussen build en .
 
 4. Check lokaal of het werkt. Zo ja, git commit etc.
+Johny test
+
 
 
