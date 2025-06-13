@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Data Preprocessing &#8212; InvoVis_Datastory</title>
+    <title>Data preprocessing TO DO: filter op variabelen die wij interessant vinden. &#8212; InvoVis_Datastory</title>
   
   
   
@@ -174,7 +174,7 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Data Preprocessing</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Data preprocessing TO DO: filter op variabelen die wij interessant vinden.</a></li>
 </ul>
 
     </div>
@@ -389,7 +389,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Data Preprocessing</h1>
+    <h1>Data preprocessing TO DO: filter op variabelen die wij interessant vinden.</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -403,34 +403,144 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="data-preprocessing">
-<h1>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Link to this heading">#</a></h1>
-<p>Student names: FIRST_STUDENT, SECOND_STUDENT, THIRD_STUDENT, FORTH_STUDENT</p>
-<p>Team number: YOUR_REGISTERED_TEAM_NUMBER_ON_CANVAS</p>
-<p>The following code is used to preprocess the datasets into files that are used for the data story.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="data-preprocessing-to-do-filter-op-variabelen-die-wij-interessant-vinden">
+<h1>Data preprocessing TO DO: filter op variabelen die wij interessant vinden.<a class="headerlink" href="#data-preprocessing-to-do-filter-op-variabelen-die-wij-interessant-vinden" title="Link to this heading">#</a></h1>
+<p>Het data preprocessen gebeurde in een aantal stappen. Wij hebben hier python code gebruikt met de pandas library.</p>
+<ol class="arabic simple">
+<li><p>De database “Police-recorded offences by offence category” van de EU hebben wij omgevormd zodat iedere soort misdaad een eigen kolom kreeg.</p></li>
+<li><p>Wij hebben de andere twee databases, “Economy &amp; Growth” en “World Bank, Poverty and Inequality Platform. (Gini Index)” omgevormd van ‘wide’ naar ‘long-format’.</p></li>
+<li><p>Wij hebben deze laatste twee databases gefilterd op jaar en land, zodat alleen die jaren en landen die voor komen in de EU database over blijven.</p></li>
+</ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Import necessary libraries</span>
-<span class="c1"># import pandas as pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="c1">######################################################</span>
+<span class="c1"># Converting wide-format datasets to long-format ones#</span>
+<span class="c1">######################################################</span>
 
-<span class="c1"># Step 2: Load and filter the datasets</span>
-<span class="c1"># data1 = load_dataset(&quot;path_to_dataset1.csv&quot;)</span>
-<span class="c1"># filtered_data1 = filer_data1(data1)</span>
-<span class="c1"># data2 = load_dataset(&quot;path_to_dataset2.csv&quot;)</span>
-<span class="c1"># filtered_data2 = filer_data2(data2)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_wide_to_long</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Year&quot;</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span><span class="p">):</span>
+    <span class="c1"># Load the CSV file</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">)</span>
+    
+    <span class="c1"># Automatically determine id_vars if not provided</span>
+    <span class="k">if</span> <span class="n">id_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">id_vars</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># First 4 columns are IDs</span>
+    
+    <span class="c1"># Melt the DataFrame</span>
+    <span class="n">df_long</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="n">id_vars</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var_name</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">value_name</span><span class="p">)</span>
+    
+    <span class="c1"># Optionally drop rows with missing values in the value column</span>
+    <span class="c1"># df_long.dropna(subset=[value_name], inplace=True)</span>
 
-<span class="c1"># Step 3: Merge datasets</span>
-<span class="c1"># merged_data = merge_datasets(filtered_data1, filtered_data2)</span>
+    <span class="k">return</span> <span class="n">df_long</span>
 
-<span class="c1"># Step 4: Process the data for visualizations</span>
-<span class="c1"># first_result_for_vis = process_first_result(filtered_data1)</span>
-<span class="c1"># second_result_for_vis = process_second_result(filtered_data2)</span>
-<span class="c1"># third_result_for_vis = process_third_result(merged_data)</span>
+<span class="c1"># Convert economy csv to long format</span>
+<span class="n">file_path1</span> <span class="o">=</span> <span class="s2">&quot;og_csv_files/API_3_DS2_en_csv_v2_390106.csv&quot;</span>
+<span class="n">world_bank_long_format</span> <span class="o">=</span> <span class="n">convert_wide_to_long</span><span class="p">(</span><span class="n">file_path1</span><span class="p">)</span>
 
-<span class="c1"># Step 5: Save the results into files</span>
-<span class="c1"># save_to_file(first_result_for_vis, &quot;table1.csv&quot;)</span>
-<span class="c1"># save_to_file(second_result_for_vis, &quot;table2.csv&quot;)</span>
-<span class="c1"># save_to_file(third_result_for_vis, &quot;table3.csv&quot;)</span>
+<span class="c1"># convert GINI csv to long format</span>
+<span class="n">filepath2</span> <span class="o">=</span> <span class="s2">&quot;og_csv_files/API_SI.POV.GINI_DS2_en_csv_v2_2566.csv&quot;</span>
+<span class="n">gini_long_format</span> <span class="o">=</span> <span class="n">convert_wide_to_long</span><span class="p">(</span><span class="n">filepath2</span><span class="p">)</span>
+
+<span class="c1">#save as new files to [path]</span>
+<span class="c1">#output_csv_path1 = &quot;world bank long format2.csv&quot;</span>
+<span class="c1">#output_csv_path2 = &quot;gini long2.csv&quot;</span>
+<span class="c1">#df_long1.to_csv(output_csv_path1, index=False)</span>
+<span class="c1">#df_long2.to_csv(output_csv_path2, index=False)</span>
+
+<span class="c1">###############################################################################</span>
+<span class="c1"># EU dataset pivot so that the different types of crime get their own columns #</span>
+<span class="c1">###############################################################################</span>
+
+<span class="c1"># Load the dataset</span>
+<span class="n">eu_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;og_csv_files/estat_crim_off_cat_filtered_en.csv&quot;</span><span class="p">)</span>
+
+<span class="c1"># Pivot the data so that all types of crime have their own column</span>
+<span class="n">df_pivot</span> <span class="o">=</span> <span class="n">eu_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Geopolitical entity (reporting)&quot;</span><span class="p">,</span> <span class="s2">&quot;TIME_PERIOD&quot;</span><span class="p">],</span>
+    <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;International classification of crime for statistical purposes (ICCS)&quot;</span><span class="p">,</span>
+    <span class="n">values</span><span class="o">=</span><span class="s2">&quot;OBS_VALUE&quot;</span>
+<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+<span class="c1"># save to new file</span>
+<span class="n">df_pivot</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;europe_crime_definitive.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1">########################################################################</span>
+<span class="c1">#Sort economy and gini to only use countries also present in eu dataset#</span>
+<span class="c1">########################################################################</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_to_european_countries</span><span class="p">(</span><span class="n">crime_file</span><span class="p">,</span> <span class="n">gini_file</span><span class="p">,</span> <span class="n">world_bank_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters the gini and world bank datasets to include only countries present in the european crime dataset.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        crime_file (str): Path to &#39;europe_crime_definitive.csv&#39;</span>
+<span class="sd">        gini_file (pd.df): Gini file in long format</span>
+<span class="sd">        world_bank_file (pd.df): World bank file in long format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of filtered DataFrames: (filtered_gini_df, filtered_world_bank_df)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load the crime dataset</span>
+    <span class="n">crime_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">crime_file</span><span class="p">)</span>
+    
+    <span class="c1"># Extract unique country names</span>
+    <span class="n">european_countries</span> <span class="o">=</span> <span class="n">crime_df</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    
+    <span class="c1"># Load GINI and World Bank datasets</span>
+    <span class="n">gini_df</span> <span class="o">=</span> <span class="n">gini_file</span>
+    <span class="n">world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_file</span>
+    
+    <span class="c1"># Filter GINI and World Bank datasets to only include European countries</span>
+    <span class="n">filtered_gini_df</span> <span class="o">=</span> <span class="n">gini_df</span><span class="p">[</span><span class="n">gini_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">filtered_world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_df</span><span class="p">[</span><span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">filtered_gini_df</span><span class="p">,</span> <span class="n">filtered_world_bank_df</span>
+
+<span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span> <span class="o">=</span> <span class="n">filter_to_european_countries</span><span class="p">(</span><span class="s1">&#39;europe_crime_definitive.csv&#39;</span><span class="p">,</span> <span class="n">gini_long_format</span><span class="p">,</span> <span class="n">world_bank_long_format</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#########################################################</span>
+<span class="c1">#Filter by the timespan of the EU database, 2008 onwards#</span>
+<span class="c1">#########################################################</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_years_from_2008</span><span class="p">(</span><span class="n">gini_df</span><span class="p">,</span> <span class="n">world_bank_df</span><span class="p">,</span> <span class="n">start_year</span><span class="o">=</span><span class="mi">2008</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters the GINI and World Bank DataFrames to include only data from start_year onward.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        gini_df (pd.DataFrame): Filtered GINI DataFrame.</span>
+<span class="sd">        world_bank_df (pd.DataFrame): Filtered World Bank DataFrame.</span>
+<span class="sd">        start_year (int): The earliest year to include (default is 2008).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of DataFrames filtered by year: (gini_filtered_by_year, world_bank_filtered_by_year)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make the string entries of the year column be interpreted as numbers</span>
+    <span class="n">gini_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">gini_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+    <span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Filter out all data with a year not 2008 or onwards</span>
+    <span class="n">gini_filtered_by_year</span> <span class="o">=</span> <span class="n">gini_df</span><span class="p">[</span><span class="n">gini_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_year</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">world_bank_filtered_by_year</span> <span class="o">=</span> <span class="n">world_bank_df</span><span class="p">[</span><span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_year</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">gini_filtered_by_year</span><span class="p">,</span> <span class="n">world_bank_filtered_by_year</span>
+
+<span class="n">gini_definitive</span><span class="p">,</span> <span class="n">world_bank_definitive</span> <span class="o">=</span> <span class="n">filter_years_from_2008</span><span class="p">(</span><span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span><span class="p">)</span>
+
+<span class="c1"># Save the final results</span>
+<span class="n">gini_definitive</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;gini_definitive.csv&#39;</span><span class="p">)</span>
+<span class="n">world_bank_definitive</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;world_bank_definitive.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
