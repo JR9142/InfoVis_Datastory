@@ -451,6 +451,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
 <span class="c1">######################################################</span>
 <span class="c1"># Converting wide-format datasets to long-format ones#</span>
 <span class="c1">######################################################</span>
@@ -465,9 +466,6 @@ document.write(`
     
     <span class="c1"># Melt the DataFrame</span>
     <span class="n">df_long</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="n">id_vars</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var_name</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">value_name</span><span class="p">)</span>
-    
-    <span class="c1"># Optionally drop rows with missing values in the value column</span>
-    <span class="c1"># df_long.dropna(subset=[value_name], inplace=True)</span>
 
     <span class="k">return</span> <span class="n">df_long</span>
 
@@ -475,92 +473,101 @@ document.write(`
 <span class="n">file_path1</span> <span class="o">=</span> <span class="s2">&quot;og_csv_files/API_3_DS2_en_csv_v2_390106.csv&quot;</span>
 <span class="n">world_bank_long_format</span> <span class="o">=</span> <span class="n">convert_wide_to_long</span><span class="p">(</span><span class="n">file_path1</span><span class="p">)</span>
 
-<span class="c1"># convert GINI csv to long format</span>
+<span class="c1"># Convert GINI csv to long format</span>
 <span class="n">filepath2</span> <span class="o">=</span> <span class="s2">&quot;og_csv_files/API_SI.POV.GINI_DS2_en_csv_v2_2566.csv&quot;</span>
 <span class="n">gini_long_format</span> <span class="o">=</span> <span class="n">convert_wide_to_long</span><span class="p">(</span><span class="n">filepath2</span><span class="p">)</span>
 
 
 <span class="c1">###############################################################################</span>
 <span class="c1"># EU dataset pivot so that the different types of crime get their own columns #</span>
-<span class="c1"># and columns with unnecessary (for us) metadata are omitted                  #</span>
 <span class="c1">###############################################################################</span>
 
 <span class="c1"># Load the dataset</span>
 <span class="n">eu_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_off_cat_filtered_en.csv&quot;</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_and_pivot_eu_crime</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">preferred_unit</span><span class="p">):</span>
-    <span class="c1"># Validate unit</span>
     <span class="k">if</span> <span class="n">preferred_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Number&#39;</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Preferred unit must be &#39;Number&#39; or &#39;Per hundred thousand inhabitants&#39;.&quot;</span><span class="p">)</span>
 
     <span class="c1"># Filter based on unit of measure</span>
     <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Unit of measure&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">preferred_unit</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="c1"># Pivot so each ICCS crime type becomes a column</span>
+    <span class="c1"># Rename columns</span>
+    <span class="n">filtered_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Geopolitical entity (reporting)&quot;</span><span class="p">:</span> <span class="s2">&quot;Country Name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TIME_PERIOD&quot;</span><span class="p">:</span> <span class="s2">&quot;Year&quot;</span>
+    <span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Pivot so each crime type becomes a column</span>
     <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">filtered_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">,</span><span class="s1">&#39;geo&#39;</span><span class="p">,</span> <span class="s1">&#39;TIME_PERIOD&#39;</span><span class="p">],</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Country Name&quot;</span><span class="p">,</span> <span class="s2">&quot;geo&quot;</span><span class="p">,</span> <span class="s2">&quot;Year&quot;</span><span class="p">],</span>
         <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;International classification of crime for statistical purposes (ICCS)&#39;</span><span class="p">,</span>
         <span class="n">values</span><span class="o">=</span><span class="s1">&#39;OBS_VALUE&#39;</span>
     <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">pivot_df</span>
 
-<span class="c1"># usage</span>
+<span class="c1"># Usage</span>
 <span class="n">eu_converted_per_100k</span> <span class="o">=</span> <span class="n">convert_and_pivot_eu_crime</span><span class="p">(</span><span class="n">eu_df</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">)</span>
 <span class="n">eu_converted_absolute</span> <span class="o">=</span> <span class="n">convert_and_pivot_eu_crime</span><span class="p">(</span><span class="n">eu_df</span><span class="p">,</span> <span class="s1">&#39;Number&#39;</span><span class="p">)</span>
 
-<span class="c1"># Save the result</span>
+<span class="c1"># Save to files</span>
 <span class="n">output_path_per_100k</span> <span class="o">=</span> <span class="s1">&#39;europe_crime_definitive_per_100k.csv&#39;</span>
-<span class="n">eu_converted_per_100k</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_per_100k</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtered and pivoted data saved to </span><span class="si">{</span><span class="n">output_path_per_100k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
 <span class="n">output_path_absolute</span> <span class="o">=</span> <span class="s1">&#39;europe_crime_definitive_absolute.csv&#39;</span>
+<span class="n">eu_converted_per_100k</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_per_100k</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">eu_converted_absolute</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_absolute</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtered and pivoted data saved to </span><span class="si">{</span><span class="n">output_path_absolute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Crime data saved to:</span><span class="se">\n</span><span class="s2"> - </span><span class="si">{</span><span class="n">output_path_per_100k</span><span class="si">}</span><span class="se">\n</span><span class="s2"> - </span><span class="si">{</span><span class="n">output_path_absolute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
 
 <span class="c1">#############################</span>
-<span class="c1">#Police &amp; justice statistics#</span>
+<span class="c1"># Police &amp; justice statistics</span>
 <span class="c1">#############################</span>
 
-<span class="c1"># same code because same structure, just &#39;columns&#39; renamed appropriately</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_and_pivot_eu_justice</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">preferred_unit</span><span class="p">):</span>
-    <span class="c1"># Validate unit</span>
     <span class="k">if</span> <span class="n">preferred_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Number&#39;</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Preferred unit must be &#39;Number&#39; or &#39;Per hundred thousand inhabitants&#39;.&quot;</span><span class="p">)</span>
 
     <span class="c1"># Filter based on unit of measure</span>
     <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Unit of measure&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">preferred_unit</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="c1"># Pivot so each ICCS crime type becomes a column</span>
+    <span class="c1"># Rename columns</span>
+    <span class="n">filtered_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Geopolitical entity (reporting)&quot;</span><span class="p">:</span> <span class="s2">&quot;Country Name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TIME_PERIOD&quot;</span><span class="p">:</span> <span class="s2">&quot;Year&quot;</span>
+    <span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Pivot justice roles into columns</span>
     <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">filtered_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">,</span><span class="s1">&#39;geo&#39;</span><span class="p">,</span> <span class="s1">&#39;TIME_PERIOD&#39;</span><span class="p">],</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Country Name&quot;</span><span class="p">,</span> <span class="s2">&quot;geo&quot;</span><span class="p">,</span> <span class="s2">&quot;Year&quot;</span><span class="p">],</span>
         <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;International Standard Classification of Occupations 2008 (ISCO-08)&#39;</span><span class="p">,</span>
         <span class="n">values</span><span class="o">=</span><span class="s1">&#39;OBS_VALUE&#39;</span>
     <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">pivot_df</span>
 
-<span class="c1"># read file</span>
+<span class="c1"># Load justice dataset</span>
 <span class="n">eu_justice_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_just_job_filtered_en.csv&#39;</span><span class="p">)</span>
 
-<span class="c1"># convert file</span>
+<span class="c1"># Convert</span>
 <span class="n">eu_justice_absolute</span> <span class="o">=</span> <span class="n">convert_and_pivot_eu_justice</span><span class="p">(</span><span class="n">eu_justice_df</span><span class="p">,</span> <span class="s1">&#39;Number&#39;</span><span class="p">)</span>
 <span class="n">eu_justice_per_100k</span> <span class="o">=</span> <span class="n">convert_and_pivot_eu_justice</span><span class="p">(</span><span class="n">eu_justice_df</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">)</span>
 
-
-<span class="c1"># save to files</span>
+<span class="c1"># Save</span>
 <span class="n">output_path_justice_absolute</span> <span class="o">=</span> <span class="s2">&quot;europe_justice_absolute.csv&quot;</span>
 <span class="n">output_path_justice_per_100k</span> <span class="o">=</span> <span class="s2">&quot;europe_justice_per_100k.csv&quot;</span>
-<span class="n">eu_justice_absolute</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_absolute</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">eu_justice_absolute</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_justice_absolute</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">eu_justice_per_100k</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_justice_per_100k</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Both justice csvs saved to their paths&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Justice data saved to:</span><span class="se">\n</span><span class="s2"> - </span><span class="si">{</span><span class="n">output_path_justice_absolute</span><span class="si">}</span><span class="se">\n</span><span class="s2"> - </span><span class="si">{</span><span class="n">output_path_justice_per_100k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Filtered and pivoted data saved to europe_crime_definitive_per_100k.csv
-Filtered and pivoted data saved to europe_crime_definitive_absolute.csv
-Both justice csvs saved to their paths
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Crime data saved to:
+ - europe_crime_definitive_per_100k.csv
+ - europe_crime_definitive_absolute.csv
+Justice data saved to:
+ - europe_justice_absolute.csv
+ - europe_justice_per_100k.csv
 </pre></div>
 </div>
 </div>
@@ -602,6 +609,63 @@ Both justice csvs saved to their paths
     <span class="k">return</span> <span class="n">filtered_gini_df</span><span class="p">,</span> <span class="n">filtered_world_bank_df</span>
 
 <span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span> <span class="o">=</span> <span class="n">filter_to_european_countries</span><span class="p">(</span><span class="s1">&#39;europe_crime_definitive_per_100k.csv&#39;</span><span class="p">,</span> <span class="n">gini_long_format</span><span class="p">,</span> <span class="n">world_bank_long_format</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/indexes/base.py:3805,</span> in <span class="ni">Index.get_loc</span><span class="nt">(self, key)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3804</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">3805</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">casted_key</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3806</span> <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+
+<span class="nn">File index.pyx:167,</span> in <span class="ni">pandas._libs.index.IndexEngine.get_loc</span><span class="nt">()</span>
+
+<span class="nn">File index.pyx:196,</span> in <span class="ni">pandas._libs.index.IndexEngine.get_loc</span><span class="nt">()</span>
+
+<span class="nn">File pandas/_libs/hashtable_class_helper.pxi:7081,</span> in <span class="ni">pandas._libs.hashtable.PyObjectHashTable.get_item</span><span class="nt">()</span>
+
+<span class="nn">File pandas/_libs/hashtable_class_helper.pxi:7089,</span> in <span class="ni">pandas._libs.hashtable.PyObjectHashTable.get_item</span><span class="nt">()</span>
+
+<span class="ne">KeyError</span>: &#39;Geopolitical entity (reporting)&#39;
+
+<span class="n">The</span> <span class="n">above</span> <span class="n">exception</span> <span class="n">was</span> <span class="n">the</span> <span class="n">direct</span> <span class="n">cause</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">exception</span><span class="p">:</span>
+
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">35</span>
+<span class="g g-Whitespace">     </span><span class="mi">31</span>     <span class="n">filtered_world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_df</span><span class="p">[</span><span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span>     <span class="k">return</span> <span class="n">filtered_gini_df</span><span class="p">,</span> <span class="n">filtered_world_bank_df</span>
+<span class="ne">---&gt; </span><span class="mi">35</span> <span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span> <span class="o">=</span> <span class="n">filter_to_european_countries</span><span class="p">(</span><span class="s1">&#39;europe_crime_definitive_per_100k.csv&#39;</span><span class="p">,</span> <span class="n">gini_long_format</span><span class="p">,</span> <span class="n">world_bank_long_format</span><span class="p">)</span>
+
+<span class="nn">Cell In[2], line 23,</span> in <span class="ni">filter_to_european_countries</span><span class="nt">(crime_file, gini_file, world_bank_file)</span>
+<span class="g g-Whitespace">     </span><span class="mi">20</span> <span class="n">crime_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">crime_file</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="c1"># Extract unique country names</span>
+<span class="ne">---&gt; </span><span class="mi">23</span> <span class="n">european_countries</span> <span class="o">=</span> <span class="n">crime_df</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">25</span> <span class="c1"># Load GINI and World Bank datasets</span>
+<span class="g g-Whitespace">     </span><span class="mi">26</span> <span class="n">gini_df</span> <span class="o">=</span> <span class="n">gini_file</span>
+
+<span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/frame.py:4102,</span> in <span class="ni">DataFrame.__getitem__</span><span class="nt">(self, key)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4100</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">4101</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getitem_multilevel</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">4102</span> <span class="n">indexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4103</span> <span class="k">if</span> <span class="n">is_integer</span><span class="p">(</span><span class="n">indexer</span><span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">4104</span>     <span class="n">indexer</span> <span class="o">=</span> <span class="p">[</span><span class="n">indexer</span><span class="p">]</span>
+
+<span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/indexes/base.py:3812,</span> in <span class="ni">Index.get_loc</span><span class="nt">(self, key)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3807</span>     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">casted_key</span><span class="p">,</span> <span class="nb">slice</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">3808</span>         <span class="nb">isinstance</span><span class="p">(</span><span class="n">casted_key</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3809</span>         <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">slice</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">casted_key</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3810</span>     <span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">3811</span>         <span class="k">raise</span> <span class="n">InvalidIndexError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">3812</span>     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+<span class="g g-Whitespace">   </span><span class="mi">3813</span> <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">3814</span>     <span class="c1"># If we have a listlike key, _check_indexing_error will raise</span>
+<span class="g g-Whitespace">   </span><span class="mi">3815</span>     <span class="c1">#  InvalidIndexError. Otherwise we fall through and re-raise</span>
+<span class="g g-Whitespace">   </span><span class="mi">3816</span>     <span class="c1">#  the TypeError.</span>
+<span class="g g-Whitespace">   </span><span class="mi">3817</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_check_indexing_error</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="ne">KeyError</span>: &#39;Geopolitical entity (reporting)&#39;
 </pre></div>
 </div>
 </div>
