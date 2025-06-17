@@ -471,14 +471,10 @@ document.write(`
 <span class="n">filepath2</span> <span class="o">=</span> <span class="s2">&quot;og_csv_files/API_SI.POV.GINI_DS2_en_csv_v2_2566.csv&quot;</span>
 <span class="n">gini_long_format</span> <span class="o">=</span> <span class="n">convert_wide_to_long</span><span class="p">(</span><span class="n">filepath2</span><span class="p">)</span>
 
-<span class="c1">#save as new files to [path]</span>
-<span class="c1">#output_csv_path1 = &quot;world bank long format2.csv&quot;</span>
-<span class="c1">#output_csv_path2 = &quot;gini long2.csv&quot;</span>
-<span class="c1">#df_long1.to_csv(output_csv_path1, index=False)</span>
-<span class="c1">#df_long2.to_csv(output_csv_path2, index=False)</span>
 
 <span class="c1">###############################################################################</span>
 <span class="c1"># EU dataset pivot so that the different types of crime get their own columns #</span>
+<span class="c1"># and columns with unnecessary (for us) metadata are omitted                  #</span>
 <span class="c1">###############################################################################</span>
 
 <span class="c1"># Load the dataset</span>
@@ -494,7 +490,7 @@ document.write(`
 
     <span class="c1"># Pivot so each ICCS crime type becomes a column</span>
     <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">filtered_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">,</span> <span class="s1">&#39;TIME_PERIOD&#39;</span><span class="p">],</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">,</span><span class="s1">&#39;geo&#39;</span><span class="p">,</span> <span class="s1">&#39;TIME_PERIOD&#39;</span><span class="p">],</span>
         <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;International classification of crime for statistical purposes (ICCS)&#39;</span><span class="p">,</span>
         <span class="n">values</span><span class="o">=</span><span class="s1">&#39;OBS_VALUE&#39;</span>
     <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
