@@ -61,6 +61,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Minder misdaad door sterkere handhaving" href="perspectief2.html" />
     <link rel="prev" title="Data preprocessing TO DO: filter op variabelen die wij interessant vinden." href="preprocess.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -176,7 +177,7 @@
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="preprocess.html">Data preprocessing TO DO: filter op variabelen die wij interessant vinden.</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Minder misdaad door minder welvaart</a></li>
-
+<li class="toctree-l1"><a class="reference internal" href="perspectief2.html">Minder misdaad door sterkere handhaving</a></li>
 </ul>
 
     </div>
@@ -403,13 +404,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Minder misdaad door minder welvaart</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verband-tussen-welvaart-en-verschillende-misdaden">Verband tussen welvaart en verschillende misdaden</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#argument-2">Argument 2</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#argument-2">Argument 2</a></li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -502,6 +499,61 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="nn">/tmp/ipykernel_106077/1095617143.py</span> in <span class="ni">?</span><span class="nt">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">36</span> <span class="n">econ_pivot</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="g g-Whitespace">     </span><span class="mi">37</span> 
+<span class="g g-Whitespace">     </span><span class="mi">38</span> 
+<span class="g g-Whitespace">     </span><span class="mi">39</span> <span class="c1"># Merge on Country and Year</span>
+<span class="ne">---&gt; </span><span class="mi">40</span> <span class="n">merged_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">econ_pivot</span><span class="p">,</span> <span class="n">crime_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">     </span><span class="mi">41</span> 
+<span class="g g-Whitespace">     </span><span class="mi">42</span> <span class="c1"># Drop rows with missing values</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="n">merged_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nn">~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/reshape/merge.py</span> in <span class="ni">?</span><span class="nt">(left, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, copy, indicator, validate)</span>
+<span class="g g-Whitespace">    </span><span class="mi">166</span>             <span class="n">validate</span><span class="o">=</span><span class="n">validate</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">167</span>             <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">168</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">169</span>     <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">170</span>         <span class="n">op</span> <span class="o">=</span> <span class="n">_MergeOperation</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">171</span>             <span class="n">left_df</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">172</span>             <span class="n">right_df</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">173</span>             <span class="n">how</span><span class="o">=</span><span class="n">how</span><span class="p">,</span>
+
+<span class="nn">~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/reshape/merge.py</span> in <span class="ni">?</span><span class="nt">(self, left, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, indicator, validate)</span>
+<span class="g g-Whitespace">    </span><span class="mi">790</span>             <span class="bp">self</span><span class="o">.</span><span class="n">right_join_keys</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">791</span>             <span class="bp">self</span><span class="o">.</span><span class="n">join_names</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">792</span>             <span class="n">left_drop</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">793</span>             <span class="n">right_drop</span><span class="p">,</span>
+<span class="ne">--&gt; </span><span class="mi">794</span>         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_merge_keys</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">795</span> 
+<span class="g g-Whitespace">    </span><span class="mi">796</span>         <span class="k">if</span> <span class="n">left_drop</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">797</span>             <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">_drop_labels_or_levels</span><span class="p">(</span><span class="n">left_drop</span><span class="p">)</span>
+
+<span class="nn">~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/reshape/merge.py</span> in <span class="ni">?</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1293</span>                         <span class="c1"># Then we&#39;re either Hashable or a wrong-length arraylike,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1294</span>                         <span class="c1">#  the latter of which will raise</span>
+<span class="g g-Whitespace">   </span><span class="mi">1295</span>                         <span class="n">rk</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Hashable</span><span class="p">,</span> <span class="n">rk</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1296</span>                         <span class="k">if</span> <span class="n">rk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1297</span>                             <span class="n">right_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">_get_label_or_level_values</span><span class="p">(</span><span class="n">rk</span><span class="p">))</span>
+<span class="g g-Whitespace">   </span><span class="mi">1298</span>                         <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1299</span>                             <span class="c1"># work-around for merge_asof(right_index=True)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1300</span>                             <span class="n">right_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">_values</span><span class="p">)</span>
+
+<span class="nn">~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/generic.py</span> in <span class="ni">?</span><span class="nt">(self, key, axis)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1907</span>             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">other_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">_values</span>
+<span class="g g-Whitespace">   </span><span class="mi">1908</span>         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_level_reference</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">1909</span>             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">_values</span>
+<span class="g g-Whitespace">   </span><span class="mi">1910</span>         <span class="k">else</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1911</span>             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1912</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1913</span>         <span class="c1"># Check for duplicates</span>
+<span class="g g-Whitespace">   </span><span class="mi">1914</span>         <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+<span class="ne">KeyError</span>: &#39;Country Name&#39;
+</pre></div>
+</div>
 </div>
 </div>
 <blockquote>
@@ -510,9 +562,8 @@ document.write(`
 <p>Verklaringen voor figuur 1, waarom past het bij het perspectief</p>
 <p>Je kan zien dat misdaden die met geld, kidnappen en sexuele activiteiten te maken hebben meer gebeuren in rijkere landen WANT VARIABELE 1, 2 CORRELEREN MET… , terwijl corruptie en moord juist meer gebeurt in minder rijke landen. Vaak is ongelijkheid ook een vorm van corruptie, dus dit is logisch.</p>
 </section>
-</section>
 <section id="argument-2">
-<h1>Argument 2<a class="headerlink" href="#argument-2" title="Link to this heading">#</a></h1>
+<h2>Argument 2<a class="headerlink" href="#argument-2" title="Link to this heading">#</a></h2>
 <p>Uitleg andere bronnen, logica</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -525,6 +576,8 @@ document.write(`
 <blockquote>
 <div><p><em>Figuur 2: Uitleg wat er te zien is, nog geen verklaring</em></p>
 </div></blockquote>
+<p>Recap + verklaring van wat er te zien is in figuur 2</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -566,6 +619,15 @@ document.write(`
         <p class="prev-next-title">Data preprocessing TO DO: filter op variabelen die wij interessant vinden.</p>
       </div>
     </a>
+    <a class="right-next"
+       href="perspectief2.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Minder misdaad door sterkere handhaving</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -582,13 +644,9 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Minder misdaad door minder welvaart</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verband-tussen-welvaart-en-verschillende-misdaden">Verband tussen welvaart en verschillende misdaden</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#argument-2">Argument 2</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#argument-2">Argument 2</a></li>
-</ul>
-
   </nav></div>
 
 </div></div>
