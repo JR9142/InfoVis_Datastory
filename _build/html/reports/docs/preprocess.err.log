@@ -1,197 +1,116 @@
 Traceback (most recent call last):
-  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 154, in wrapped
+    asyncio.get_running_loop()
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
-  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 1319, in execute
+  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 1319, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
-  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 158, in wrapped
     return loop.run_until_complete(inner)
-  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
     return future.result()
-  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 709, in async_execute
+  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 709, in async_execute
     await self.async_execute_cell(
-  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 1062, in async_execute_cell
     await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
 import pandas as pd
-######################################################
-# Converting wide-format datasets to long-format ones#
-######################################################
 
-def convert_wide_to_long(file_path, skiprows=4, id_vars=None, var_name="Year", value_name="Value"):
-    # Load the CSV file
-    df = pd.read_csv(file_path, skiprows=skiprows)
+########################################################################
+#Sort economy and gini to only use countries also present in eu dataset#
+########################################################################
+
+def filter_to_european_countries(crime_file, gini_file, world_bank_file):
+    """
+    Filters the gini and world bank datasets to include only countries present in the european crime dataset.
+
+    Parameters:
+        crime_file (str): Path to 'europe_crime_definitive.csv'
+        gini_file (pd.df): Gini file in long format
+        world_bank_file (pd.df): World bank file in long format
+
+    Returns:
+        Tuple of filtered DataFrames: (filtered_gini_df, filtered_world_bank_df)
+    """
+    # Load the crime dataset
+    crime_df = pd.read_csv(crime_file)
     
-    # Automatically determine id_vars if not provided
-    if id_vars is None:
-        id_vars = df.columns[:4]  # First 4 columns are IDs
+    # Extract unique country names
+    european_countries = crime_df['Geopolitical entity (reporting)'].unique()
     
-    # Melt the DataFrame
-    df_long = pd.melt(df, id_vars=id_vars, var_name=var_name, value_name=value_name)
+    # Load GINI and World Bank datasets
+    gini_df = gini_file
+    world_bank_df = world_bank_file
     
-    # Optionally drop rows with missing values in the value column
-    # df_long.dropna(subset=[value_name], inplace=True)
+    # Filter GINI and World Bank datasets to only include European countries
+    filtered_gini_df = gini_df[gini_df['Country Name'].isin(european_countries)].copy()
+    filtered_world_bank_df = world_bank_df[world_bank_df['Country Name'].isin(european_countries)].copy()
+    
+    return filtered_gini_df, filtered_world_bank_df
 
-    return df_long
-
-# Convert economy csv to long format
-file_path1 = "og_csv_files/API_3_DS2_en_csv_v2_390106.csv"
-world_bank_long_format = convert_wide_to_long(file_path1)
-
-# convert GINI csv to long format
-filepath2 = "og_csv_files/API_SI.POV.GINI_DS2_en_csv_v2_2566.csv"
-gini_long_format = convert_wide_to_long(filepath2)
-
-
-###############################################################################
-# EU dataset pivot so that the different types of crime get their own columns #
-# and columns with unnecessary (for us) metadata are omitted                  #
-###############################################################################
-
-# Load the dataset
-eu_df = pd.read_csv("/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_off_cat_filtered_en.csv")
-
-def convert_and_pivot_eu_crime(df, preferred_unit):
-    # Validate unit
-    if preferred_unit not in ['Number', 'Per hundred thousand inhabitants']:
-        raise ValueError("Preferred unit must be 'Number' or 'Per hundred thousand inhabitants'.")
-
-    # Filter based on unit of measure
-    filtered_df = df[df['Unit of measure'] == preferred_unit].copy()
-
-    # Pivot so each ICCS crime type becomes a column
-    pivot_df = filtered_df.pivot_table(
-        index=['Geopolitical entity (reporting)','geo', 'TIME_PERIOD'],
-        columns='International classification of crime for statistical purposes (ICCS)',
-        values='OBS_VALUE'
-    ).reset_index()
-
-    return pivot_df
-
-# usage
-eu_converted_per_100k = convert_and_pivot_eu_crime(eu_df, 'Per hundred thousand inhabitants')
-eu_converted_absolute = convert_and_pivot_eu_crime(eu_df, 'Number')
-
-# Save the result
-output_path_per_100k = 'europe_crime_definitive_per_100k.csv'
-eu_converted_per_100k.to_csv(output_path_per_100k, index=False)
-print(f"Filtered and pivoted data saved to {output_path_per_100k}")
-
-output_path_absolute = 'europe_crime_definitive_absolute.csv'
-eu_converted_absolute.to_csv(output_path_absolute, index=False)
-print(f"Filtered and pivoted data saved to {output_path_absolute}")
-
-#############################
-#Police & justice statistics#
-#############################
-
-# same code because same structure, just 'columns' renamed appropriately
-def convert_and_pivot_eu_justice(df, preferred_unit):
-    # Validate unit
-    if preferred_unit not in ['Number', 'Per hundred thousand inhabitants']:
-        raise ValueError("Preferred unit must be 'Number' or 'Per hundred thousand inhabitants'.")
-
-    # Filter based on unit of measure
-    filtered_df = df[df['Unit of measure'] == preferred_unit].copy()
-
-    # Pivot so each ICCS crime type becomes a column
-    pivot_df = filtered_df.pivot_table(
-        index=['Geopolitical entity (reporting)','geo', 'TIME_PERIOD'],
-        columns='International Standard Classification of Occupations 2008 (ISCO-08)',
-        values='OBS_VALUE'
-    ).reset_index()
-
-    return pivot_df
-
-# read file
-eu_justice_df = pd.read_csv('/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_just_job_filtered_en.csv')
-
-# convert file
-eu_justice_absolute = convert_and_pivot_eu_justice(eu_justice_df, 'Number')
-eu_justice_per_100k = convert_and_pivot_eu_justice(eu_justice_df, 'Per hundred thousand inhabitants')
-
-
-# save to files
-output_path_justice_absolute = "europe_justice_absolute.csv"
-output_path_justice_per_100k = "europe_justice_per_100k.csv"
-eu_justice_absolute.to_csv(output_path_absolute, index=False)
-eu_justice_per_100k.to_csv(output_path_justice_per_100k, index=False)
-print("Both justice csvs saved to their paths")
-
+gini_filtered, world_bank_filtered = filter_to_european_countries('europe_crime_definitive_per_100k.csv', gini_long_format, world_bank_long_format)
 ------------------
 
 
 [0;31m---------------------------------------------------------------------------[0m
-[0;31mFileNotFoundError[0m                         Traceback (most recent call last)
-Cell [0;32mIn[1], line 37[0m
-[1;32m     28[0m gini_long_format [38;5;241m=[39m convert_wide_to_long(filepath2)
-[1;32m     31[0m [38;5;66;03m###############################################################################[39;00m
-[1;32m     32[0m [38;5;66;03m# EU dataset pivot so that the different types of crime get their own columns #[39;00m
-[1;32m     33[0m [38;5;66;03m# and columns with unnecessary (for us) metadata are omitted                  #[39;00m
-[1;32m     34[0m [38;5;66;03m###############################################################################[39;00m
-[1;32m     35[0m 
-[1;32m     36[0m [38;5;66;03m# Load the dataset[39;00m
-[0;32m---> 37[0m eu_df [38;5;241m=[39m [43mpd[49m[38;5;241;43m.[39;49m[43mread_csv[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43m/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_off_cat_filtered_en.csv[39;49m[38;5;124;43m"[39;49m[43m)[49m
-[1;32m     39[0m [38;5;28;01mdef[39;00m[38;5;250m [39m[38;5;21mconvert_and_pivot_eu_crime[39m(df, preferred_unit):
-[1;32m     40[0m     [38;5;66;03m# Validate unit[39;00m
-[1;32m     41[0m     [38;5;28;01mif[39;00m preferred_unit [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m [[38;5;124m'[39m[38;5;124mNumber[39m[38;5;124m'[39m, [38;5;124m'[39m[38;5;124mPer hundred thousand inhabitants[39m[38;5;124m'[39m]:
+[0;31mKeyError[0m                                  Traceback (most recent call last)
+File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/indexes/base.py:3805[0m, in [0;36mIndex.get_loc[0;34m(self, key)[0m
+[1;32m   3804[0m [38;5;28;01mtry[39;00m:
+[0;32m-> 3805[0m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_engine[49m[38;5;241;43m.[39;49m[43mget_loc[49m[43m([49m[43mcasted_key[49m[43m)[49m
+[1;32m   3806[0m [38;5;28;01mexcept[39;00m [38;5;167;01mKeyError[39;00m [38;5;28;01mas[39;00m err:
 
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1026[0m, in [0;36mread_csv[0;34m(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)[0m
-[1;32m   1013[0m kwds_defaults [38;5;241m=[39m _refine_defaults_read(
-[1;32m   1014[0m     dialect,
-[1;32m   1015[0m     delimiter,
-[0;32m   (...)[0m
-[1;32m   1022[0m     dtype_backend[38;5;241m=[39mdtype_backend,
-[1;32m   1023[0m )
-[1;32m   1024[0m kwds[38;5;241m.[39mupdate(kwds_defaults)
-[0;32m-> 1026[0m [38;5;28;01mreturn[39;00m [43m_read[49m[43m([49m[43mfilepath_or_buffer[49m[43m,[49m[43m [49m[43mkwds[49m[43m)[49m
+File [0;32mindex.pyx:167[0m, in [0;36mpandas._libs.index.IndexEngine.get_loc[0;34m()[0m
 
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:620[0m, in [0;36m_read[0;34m(filepath_or_buffer, kwds)[0m
-[1;32m    617[0m _validate_names(kwds[38;5;241m.[39mget([38;5;124m"[39m[38;5;124mnames[39m[38;5;124m"[39m, [38;5;28;01mNone[39;00m))
-[1;32m    619[0m [38;5;66;03m# Create the parser.[39;00m
-[0;32m--> 620[0m parser [38;5;241m=[39m [43mTextFileReader[49m[43m([49m[43mfilepath_or_buffer[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mkwds[49m[43m)[49m
-[1;32m    622[0m [38;5;28;01mif[39;00m chunksize [38;5;129;01mor[39;00m iterator:
-[1;32m    623[0m     [38;5;28;01mreturn[39;00m parser
+File [0;32mindex.pyx:196[0m, in [0;36mpandas._libs.index.IndexEngine.get_loc[0;34m()[0m
 
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1620[0m, in [0;36mTextFileReader.__init__[0;34m(self, f, engine, **kwds)[0m
-[1;32m   1617[0m     [38;5;28mself[39m[38;5;241m.[39moptions[[38;5;124m"[39m[38;5;124mhas_index_names[39m[38;5;124m"[39m] [38;5;241m=[39m kwds[[38;5;124m"[39m[38;5;124mhas_index_names[39m[38;5;124m"[39m]
-[1;32m   1619[0m [38;5;28mself[39m[38;5;241m.[39mhandles: IOHandles [38;5;241m|[39m [38;5;28;01mNone[39;00m [38;5;241m=[39m [38;5;28;01mNone[39;00m
-[0;32m-> 1620[0m [38;5;28mself[39m[38;5;241m.[39m_engine [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_make_engine[49m[43m([49m[43mf[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mengine[49m[43m)[49m
+File [0;32mpandas/_libs/hashtable_class_helper.pxi:7081[0m, in [0;36mpandas._libs.hashtable.PyObjectHashTable.get_item[0;34m()[0m
 
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1880[0m, in [0;36mTextFileReader._make_engine[0;34m(self, f, engine)[0m
-[1;32m   1878[0m     [38;5;28;01mif[39;00m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m mode:
-[1;32m   1879[0m         mode [38;5;241m+[39m[38;5;241m=[39m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m
-[0;32m-> 1880[0m [38;5;28mself[39m[38;5;241m.[39mhandles [38;5;241m=[39m [43mget_handle[49m[43m([49m
-[1;32m   1881[0m [43m    [49m[43mf[49m[43m,[49m
-[1;32m   1882[0m [43m    [49m[43mmode[49m[43m,[49m
-[1;32m   1883[0m [43m    [49m[43mencoding[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mencoding[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1884[0m [43m    [49m[43mcompression[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mcompression[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1885[0m [43m    [49m[43mmemory_map[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mmemory_map[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mFalse[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1886[0m [43m    [49m[43mis_text[49m[38;5;241;43m=[39;49m[43mis_text[49m[43m,[49m
-[1;32m   1887[0m [43m    [49m[43merrors[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mencoding_errors[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;124;43m"[39;49m[38;5;124;43mstrict[39;49m[38;5;124;43m"[39;49m[43m)[49m[43m,[49m
-[1;32m   1888[0m [43m    [49m[43mstorage_options[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mstorage_options[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1889[0m [43m[49m[43m)[49m
-[1;32m   1890[0m [38;5;28;01massert[39;00m [38;5;28mself[39m[38;5;241m.[39mhandles [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m
-[1;32m   1891[0m f [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mhandles[38;5;241m.[39mhandle
+File [0;32mpandas/_libs/hashtable_class_helper.pxi:7089[0m, in [0;36mpandas._libs.hashtable.PyObjectHashTable.get_item[0;34m()[0m
 
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/common.py:873[0m, in [0;36mget_handle[0;34m(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)[0m
-[1;32m    868[0m [38;5;28;01melif[39;00m [38;5;28misinstance[39m(handle, [38;5;28mstr[39m):
-[1;32m    869[0m     [38;5;66;03m# Check whether the filename is to be opened in binary mode.[39;00m
-[1;32m    870[0m     [38;5;66;03m# Binary mode does not support 'encoding' and 'newline'.[39;00m
-[1;32m    871[0m     [38;5;28;01mif[39;00m ioargs[38;5;241m.[39mencoding [38;5;129;01mand[39;00m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m ioargs[38;5;241m.[39mmode:
-[1;32m    872[0m         [38;5;66;03m# Encoding[39;00m
-[0;32m--> 873[0m         handle [38;5;241m=[39m [38;5;28;43mopen[39;49m[43m([49m
-[1;32m    874[0m [43m            [49m[43mhandle[49m[43m,[49m
-[1;32m    875[0m [43m            [49m[43mioargs[49m[38;5;241;43m.[39;49m[43mmode[49m[43m,[49m
-[1;32m    876[0m [43m            [49m[43mencoding[49m[38;5;241;43m=[39;49m[43mioargs[49m[38;5;241;43m.[39;49m[43mencoding[49m[43m,[49m
-[1;32m    877[0m [43m            [49m[43merrors[49m[38;5;241;43m=[39;49m[43merrors[49m[43m,[49m
-[1;32m    878[0m [43m            [49m[43mnewline[49m[38;5;241;43m=[39;49m[38;5;124;43m"[39;49m[38;5;124;43m"[39;49m[43m,[49m
-[1;32m    879[0m [43m        [49m[43m)[49m
-[1;32m    880[0m     [38;5;28;01melse[39;00m:
-[1;32m    881[0m         [38;5;66;03m# Binary mode[39;00m
-[1;32m    882[0m         handle [38;5;241m=[39m [38;5;28mopen[39m(handle, ioargs[38;5;241m.[39mmode)
+[0;31mKeyError[0m: 'Geopolitical entity (reporting)'
 
-[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: '/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_off_cat_filtered_en.csv'
+The above exception was the direct cause of the following exception:
+
+[0;31mKeyError[0m                                  Traceback (most recent call last)
+Cell [0;32mIn[2], line 35[0m
+[1;32m     31[0m     filtered_world_bank_df [38;5;241m=[39m world_bank_df[world_bank_df[[38;5;124m'[39m[38;5;124mCountry Name[39m[38;5;124m'[39m][38;5;241m.[39misin(european_countries)][38;5;241m.[39mcopy()
+[1;32m     33[0m     [38;5;28;01mreturn[39;00m filtered_gini_df, filtered_world_bank_df
+[0;32m---> 35[0m gini_filtered, world_bank_filtered [38;5;241m=[39m [43mfilter_to_european_countries[49m[43m([49m[38;5;124;43m'[39;49m[38;5;124;43meurope_crime_definitive_per_100k.csv[39;49m[38;5;124;43m'[39;49m[43m,[49m[43m [49m[43mgini_long_format[49m[43m,[49m[43m [49m[43mworld_bank_long_format[49m[43m)[49m
+
+Cell [0;32mIn[2], line 23[0m, in [0;36mfilter_to_european_countries[0;34m(crime_file, gini_file, world_bank_file)[0m
+[1;32m     20[0m crime_df [38;5;241m=[39m pd[38;5;241m.[39mread_csv(crime_file)
+[1;32m     22[0m [38;5;66;03m# Extract unique country names[39;00m
+[0;32m---> 23[0m european_countries [38;5;241m=[39m [43mcrime_df[49m[43m[[49m[38;5;124;43m'[39;49m[38;5;124;43mGeopolitical entity (reporting)[39;49m[38;5;124;43m'[39;49m[43m][49m[38;5;241m.[39munique()
+[1;32m     25[0m [38;5;66;03m# Load GINI and World Bank datasets[39;00m
+[1;32m     26[0m gini_df [38;5;241m=[39m gini_file
+
+File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/frame.py:4102[0m, in [0;36mDataFrame.__getitem__[0;34m(self, key)[0m
+[1;32m   4100[0m [38;5;28;01mif[39;00m [38;5;28mself[39m[38;5;241m.[39mcolumns[38;5;241m.[39mnlevels [38;5;241m>[39m [38;5;241m1[39m:
+[1;32m   4101[0m     [38;5;28;01mreturn[39;00m [38;5;28mself[39m[38;5;241m.[39m_getitem_multilevel(key)
+[0;32m-> 4102[0m indexer [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mcolumns[49m[38;5;241;43m.[39;49m[43mget_loc[49m[43m([49m[43mkey[49m[43m)[49m
+[1;32m   4103[0m [38;5;28;01mif[39;00m is_integer(indexer):
+[1;32m   4104[0m     indexer [38;5;241m=[39m [indexer]
+
+File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/indexes/base.py:3812[0m, in [0;36mIndex.get_loc[0;34m(self, key)[0m
+[1;32m   3807[0m     [38;5;28;01mif[39;00m [38;5;28misinstance[39m(casted_key, [38;5;28mslice[39m) [38;5;129;01mor[39;00m (
+[1;32m   3808[0m         [38;5;28misinstance[39m(casted_key, abc[38;5;241m.[39mIterable)
+[1;32m   3809[0m         [38;5;129;01mand[39;00m [38;5;28many[39m([38;5;28misinstance[39m(x, [38;5;28mslice[39m) [38;5;28;01mfor[39;00m x [38;5;129;01min[39;00m casted_key)
+[1;32m   3810[0m     ):
+[1;32m   3811[0m         [38;5;28;01mraise[39;00m InvalidIndexError(key)
+[0;32m-> 3812[0m     [38;5;28;01mraise[39;00m [38;5;167;01mKeyError[39;00m(key) [38;5;28;01mfrom[39;00m[38;5;250m [39m[38;5;21;01merr[39;00m
+[1;32m   3813[0m [38;5;28;01mexcept[39;00m [38;5;167;01mTypeError[39;00m:
+[1;32m   3814[0m     [38;5;66;03m# If we have a listlike key, _check_indexing_error will raise[39;00m
+[1;32m   3815[0m     [38;5;66;03m#  InvalidIndexError. Otherwise we fall through and re-raise[39;00m
+[1;32m   3816[0m     [38;5;66;03m#  the TypeError.[39;00m
+[1;32m   3817[0m     [38;5;28mself[39m[38;5;241m.[39m_check_indexing_error(key)
+
+[0;31mKeyError[0m: 'Geopolitical entity (reporting)'
 
