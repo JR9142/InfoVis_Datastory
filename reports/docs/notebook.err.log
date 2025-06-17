@@ -1,153 +1,191 @@
 Traceback (most recent call last):
-  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 154, in wrapped
-    asyncio.get_running_loop()
-RuntimeError: no running event loop
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
-  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 1319, in execute
+  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 1319, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
-  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 158, in wrapped
+  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
     return loop.run_until_complete(inner)
-  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
     return future.result()
-  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 709, in async_execute
+  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 709, in async_execute
     await self.async_execute_cell(
-  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 1062, in async_execute_cell
     await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+  File "/home/chris/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-import plotly.graph_objects as go
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import plotly.io as pio
+import pycountry
 
-# Read the data from table2.csv
-df2 = pd.read_csv('table2.csv')
+pio.renderers.default = 'notebook'
 
-# Initialize a figure
-fig2 = go.Figure()
+# === Load GINI Data ===
+gini_df = pd.read_csv("gini_definitive.csv")
+gini_df['Year'] = gini_df['Year'].astype(int)
 
-# Create the first line
-fig2.add_trace(
-    go.Scatter(
-        x=df2["Jaartal"], 
-        y=df2["Workers involved (x 1,000)"],
-        mode='lines+markers',
-        line=dict(color='#00a1cd', width=2),
-        marker=dict(color='#00a1cd', size=5),
-        name="Workers involved",
-        hovertemplate='<b>%{x}</b><br>Workers involved: <b>%{y} thousand</b> <extra></extra>'
-    )
+# === Load Theft Data ===
+theft_df = pd.read_csv("europe_crime_definitive_absolute.csv")
+theft_df.rename(columns={'geo': 'Country Code', 'TIME_PERIOD': 'Year'}, inplace=True)
+
+# Convert ISO-2 to ISO-3
+def convert_iso2_to_iso3(code):
+    try:
+        return pycountry.countries.get(alpha_2=code).alpha_3
+    except:
+        return None
+
+theft_df['Country Code'] = theft_df['Country Code'].apply(convert_iso2_to_iso3)
+
+# Manual fixes for special regions/countries
+manual_fix = {
+    'England and Wales': 'GBR',
+    'Northern Ireland (UK) (NUTS 2021)': 'GBR',
+    'Scotland (NUTS 2021)': 'GBR',
+    'Greece': 'GRC',
+    'Kosovo*': 'XKX'
+}
+
+theft_df['Country Code'] = theft_df.apply(
+    lambda row: manual_fix[row['Geopolitical entity (reporting)']] 
+    if pd.isnull(row['Country Code']) and row['Geopolitical entity (reporting)'] in manual_fix
+    else row['Country Code'],
+    axis=1
 )
 
-# Create the second line
-fig2.add_trace(
-    go.Scatter(
-        x=df2["Jaartal"], 
-        y=df2["Working days lost (x 1,000)"],
-        mode='lines+markers',
-        line=dict(color='#0058b8', width=2),
-        marker=dict(color='#0058b8', size=5),
-        name="Working days lost",
-        hovertemplate='<b>%{x}</b><br>Working days lost: <b>%{y} thousand</b> <extra></extra>'
-    )
+theft_df['Year'] = theft_df['Year'].astype(int)
+theft_df['Theft'] = pd.to_numeric(theft_df['Theft'], errors='coerce').fillna(0)
+
+# === Years intersection and max year 2022 ===
+years = sorted(list(set(gini_df['Year']).intersection(set(theft_df['Year']))))
+years = [year for year in years if year <= 2022]
+
+# Create subplot
+fig = make_subplots(
+    rows=1, cols=2,
+    specs=[[{'type': 'choropleth'}, {'type': 'choropleth'}]],
+    subplot_titles=('GINI Index', 'Theft Incidents')
 )
 
-# Customize the plot layout
-fig2.update_layout(
-    plot_bgcolor='white',
-    xaxis=dict(title='Years'),
-    yaxis=dict(title=''),  # Remove y-axis tick labels
-    legend=dict(title='', orientation='h', yanchor='bottom', y=-0.3, xanchor='right', x=0.3),  # Update legend settings
-    title="Number of workers involved and working<br>days lost during strikes (in thousand)",
-    height=500
+# Define color scales
+gini_min, gini_max = gini_df['Value'].min(), gini_df['Value'].max()
+theft_min, theft_max = theft_df['Theft'].min(), theft_df['Theft'].max()
+
+# Add base traces (Year = first year)
+fig.add_trace(
+    go.Choropleth(
+        locations=gini_df[gini_df['Year'] == years[0]]['Country Code'],
+        z=gini_df[gini_df['Year'] == years[0]]['Value'],
+        text=gini_df[gini_df['Year'] == years[0]]['Country Name'],
+        colorscale='Viridis',
+        zmin=gini_min,
+        zmax=gini_max,
+        colorbar=dict(title='GINI', x=0.45)  # position colorbar left
+    ),
+    row=1, col=1
 )
 
-# Add horizontal lines at y = 0, 100, 200, 300, 400, and 500
-y_values = [0, 100, 200, 300, 400, 500]
-for y in y_values:
-    fig2.add_shape(
-        type='line',
-        x0=min(df2['Jaartal']),
-        x1=max(df2['Jaartal']),
-        y0=y,
-        y1=y,
-        line=dict(color='black'),
-        line_width=0.5
-    )
+fig.add_trace(
+    go.Choropleth(
+        locations=theft_df[theft_df['Year'] == years[0]]['Country Code'],
+        z=theft_df[theft_df['Year'] == years[0]]['Theft'],
+        text=theft_df[theft_df['Year'] == years[0]]['Geopolitical entity (reporting)'],
+        colorscale='Reds',
+        zmin=theft_min,
+        zmax=theft_max,
+        colorbar=dict(title='Theft', x=1.0)  # position colorbar right
+    ),
+    row=1, col=2
+)
 
-# Show the plot
-fig2.show()
+# Animation frames
+frames = []
+for year in years:
+    frame = go.Frame(
+        data=[
+            go.Choropleth(
+                locations=gini_df[gini_df['Year'] == year]['Country Code'],
+                z=gini_df[gini_df['Year'] == year]['Value'],
+                text=gini_df[gini_df['Year'] == year]['Country Name']
+            ),
+            go.Choropleth(
+                locations=theft_df[theft_df['Year'] == year]['Country Code'],
+                z=theft_df[theft_df['Year'] == year]['Theft'],
+                text=theft_df[theft_df['Year'] == year]['Geopolitical entity (reporting)']
+            )
+        ],
+        name=str(year)
+    )
+    frames.append(frame)
+
+# Update layout
+fig.update_layout(
+    title_text='GINI Index and Theft Incidents in Europe per Year',
+    title_x=0.5,
+    geo=dict(
+        showframe=False,
+        showcoastlines=True,
+        lataxis_range=[30, 72],
+        lonaxis_range=[-25, 45],
+        projection_type='natural earth'
+    ),
+    geo2=dict(  # for the 2nd map
+        showframe=False,
+        showcoastlines=True,
+        lataxis_range=[30, 72],
+        lonaxis_range=[-25, 45],
+        projection_type='natural earth'
+    ),
+    sliders=[{
+        "steps": [{
+            "args": [[str(year)], {"frame": {"duration": 500, "redraw": True}, "mode": "immediate"}],
+            "label": str(year),
+            "method": "animate"
+        } for year in years],
+        "transition": {"duration": 300},
+        "x": 0.1,
+        "len": 0.8
+    }],
+    updatemenus=[{
+        "buttons": [{
+            "args": [None, {"frame": {"duration": 500, "redraw": True}, "fromcurrent": True}],
+            "label": "Play",
+            "method": "animate"
+        }, {
+            "args": [[None], {"frame": {"duration": 0}, "mode": "immediate"}],
+            "label": "Pause",
+            "method": "animate"
+        }],
+        "direction": "left",
+        "pad": {"r": 10, "t": 70},
+        "showactive": False,
+        "type": "buttons",
+        "x": 0.1,
+        "xanchor": "right",
+        "y": 0,
+        "yanchor": "top"
+    }]
+)
+
+fig.frames = frames
+
+fig.show()
+
 ------------------
 
 
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mFileNotFoundError[0m                         Traceback (most recent call last)
-Cell [0;32mIn[2], line 5[0m
-[1;32m      2[0m [38;5;28;01mimport[39;00m[38;5;250m [39m[38;5;21;01mpandas[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[38;5;21;01mpd[39;00m
-[1;32m      4[0m [38;5;66;03m# Read the data from table2.csv[39;00m
-[0;32m----> 5[0m df2 [38;5;241m=[39m [43mpd[49m[38;5;241;43m.[39;49m[43mread_csv[49m[43m([49m[38;5;124;43m'[39;49m[38;5;124;43mtable2.csv[39;49m[38;5;124;43m'[39;49m[43m)[49m
-[1;32m      7[0m [38;5;66;03m# Initialize a figure[39;00m
-[1;32m      8[0m fig2 [38;5;241m=[39m go[38;5;241m.[39mFigure()
+[31m---------------------------------------------------------------------------[39m
+[31mModuleNotFoundError[39m                       Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[5][39m[32m, line 6[39m
+[32m      4[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mplotly[39;00m[34;01m.[39;00m[34;01msubplots[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m make_subplots
+[32m      5[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mplotly[39;00m[34;01m.[39;00m[34;01mio[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[34;01mpio[39;00m
+[32m----> [39m[32m6[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mpycountry[39;00m
+[32m      8[39m pio.renderers.default = [33m'[39m[33mnotebook[39m[33m'[39m
+[32m     10[39m [38;5;66;03m# === Load GINI Data ===[39;00m
 
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1026[0m, in [0;36mread_csv[0;34m(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)[0m
-[1;32m   1013[0m kwds_defaults [38;5;241m=[39m _refine_defaults_read(
-[1;32m   1014[0m     dialect,
-[1;32m   1015[0m     delimiter,
-[0;32m   (...)[0m
-[1;32m   1022[0m     dtype_backend[38;5;241m=[39mdtype_backend,
-[1;32m   1023[0m )
-[1;32m   1024[0m kwds[38;5;241m.[39mupdate(kwds_defaults)
-[0;32m-> 1026[0m [38;5;28;01mreturn[39;00m [43m_read[49m[43m([49m[43mfilepath_or_buffer[49m[43m,[49m[43m [49m[43mkwds[49m[43m)[49m
-
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:620[0m, in [0;36m_read[0;34m(filepath_or_buffer, kwds)[0m
-[1;32m    617[0m _validate_names(kwds[38;5;241m.[39mget([38;5;124m"[39m[38;5;124mnames[39m[38;5;124m"[39m, [38;5;28;01mNone[39;00m))
-[1;32m    619[0m [38;5;66;03m# Create the parser.[39;00m
-[0;32m--> 620[0m parser [38;5;241m=[39m [43mTextFileReader[49m[43m([49m[43mfilepath_or_buffer[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mkwds[49m[43m)[49m
-[1;32m    622[0m [38;5;28;01mif[39;00m chunksize [38;5;129;01mor[39;00m iterator:
-[1;32m    623[0m     [38;5;28;01mreturn[39;00m parser
-
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1620[0m, in [0;36mTextFileReader.__init__[0;34m(self, f, engine, **kwds)[0m
-[1;32m   1617[0m     [38;5;28mself[39m[38;5;241m.[39moptions[[38;5;124m"[39m[38;5;124mhas_index_names[39m[38;5;124m"[39m] [38;5;241m=[39m kwds[[38;5;124m"[39m[38;5;124mhas_index_names[39m[38;5;124m"[39m]
-[1;32m   1619[0m [38;5;28mself[39m[38;5;241m.[39mhandles: IOHandles [38;5;241m|[39m [38;5;28;01mNone[39;00m [38;5;241m=[39m [38;5;28;01mNone[39;00m
-[0;32m-> 1620[0m [38;5;28mself[39m[38;5;241m.[39m_engine [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_make_engine[49m[43m([49m[43mf[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mengine[49m[43m)[49m
-
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1880[0m, in [0;36mTextFileReader._make_engine[0;34m(self, f, engine)[0m
-[1;32m   1878[0m     [38;5;28;01mif[39;00m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m mode:
-[1;32m   1879[0m         mode [38;5;241m+[39m[38;5;241m=[39m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m
-[0;32m-> 1880[0m [38;5;28mself[39m[38;5;241m.[39mhandles [38;5;241m=[39m [43mget_handle[49m[43m([49m
-[1;32m   1881[0m [43m    [49m[43mf[49m[43m,[49m
-[1;32m   1882[0m [43m    [49m[43mmode[49m[43m,[49m
-[1;32m   1883[0m [43m    [49m[43mencoding[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mencoding[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1884[0m [43m    [49m[43mcompression[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mcompression[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1885[0m [43m    [49m[43mmemory_map[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mmemory_map[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mFalse[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1886[0m [43m    [49m[43mis_text[49m[38;5;241;43m=[39;49m[43mis_text[49m[43m,[49m
-[1;32m   1887[0m [43m    [49m[43merrors[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mencoding_errors[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;124;43m"[39;49m[38;5;124;43mstrict[39;49m[38;5;124;43m"[39;49m[43m)[49m[43m,[49m
-[1;32m   1888[0m [43m    [49m[43mstorage_options[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mstorage_options[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1889[0m [43m[49m[43m)[49m
-[1;32m   1890[0m [38;5;28;01massert[39;00m [38;5;28mself[39m[38;5;241m.[39mhandles [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m
-[1;32m   1891[0m f [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mhandles[38;5;241m.[39mhandle
-
-File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/common.py:873[0m, in [0;36mget_handle[0;34m(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)[0m
-[1;32m    868[0m [38;5;28;01melif[39;00m [38;5;28misinstance[39m(handle, [38;5;28mstr[39m):
-[1;32m    869[0m     [38;5;66;03m# Check whether the filename is to be opened in binary mode.[39;00m
-[1;32m    870[0m     [38;5;66;03m# Binary mode does not support 'encoding' and 'newline'.[39;00m
-[1;32m    871[0m     [38;5;28;01mif[39;00m ioargs[38;5;241m.[39mencoding [38;5;129;01mand[39;00m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m ioargs[38;5;241m.[39mmode:
-[1;32m    872[0m         [38;5;66;03m# Encoding[39;00m
-[0;32m--> 873[0m         handle [38;5;241m=[39m [38;5;28;43mopen[39;49m[43m([49m
-[1;32m    874[0m [43m            [49m[43mhandle[49m[43m,[49m
-[1;32m    875[0m [43m            [49m[43mioargs[49m[38;5;241;43m.[39;49m[43mmode[49m[43m,[49m
-[1;32m    876[0m [43m            [49m[43mencoding[49m[38;5;241;43m=[39;49m[43mioargs[49m[38;5;241;43m.[39;49m[43mencoding[49m[43m,[49m
-[1;32m    877[0m [43m            [49m[43merrors[49m[38;5;241;43m=[39;49m[43merrors[49m[43m,[49m
-[1;32m    878[0m [43m            [49m[43mnewline[49m[38;5;241;43m=[39;49m[38;5;124;43m"[39;49m[38;5;124;43m"[39;49m[43m,[49m
-[1;32m    879[0m [43m        [49m[43m)[49m
-[1;32m    880[0m     [38;5;28;01melse[39;00m:
-[1;32m    881[0m         [38;5;66;03m# Binary mode[39;00m
-[1;32m    882[0m         handle [38;5;241m=[39m [38;5;28mopen[39m(handle, ioargs[38;5;241m.[39mmode)
-
-[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: 'table2.csv'
+[31mModuleNotFoundError[39m: No module named 'pycountry'
 
