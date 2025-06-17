@@ -462,9 +462,15 @@ document.write(`
 <span class="n">values</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span>
 <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
+<span class="c1"># Prepare crime data</span>
+<span class="n">crime_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">:</span> <span class="s1">&#39;Country Name&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TIME_PERIOD&#39;</span><span class="p">:</span> <span class="s1">&#39;Year&#39;</span>
+<span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">crime_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">crime_df</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+
 <span class="c1"># Rename columns for convenience</span>
 <span class="n">econ_pivot</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
-
 
 <span class="c1"># Merge on Country and Year</span>
 <span class="n">merged_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">econ_pivot</span><span class="p">,</span> <span class="n">crime_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">])</span>
@@ -490,77 +496,22 @@ document.write(`
 <span class="c1"># === Plot Heatmap ===</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
 <span class="n">econ_crime_corr</span><span class="p">,</span>
-<span class="n">labels</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Crime Indicators&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Economic Indicators&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;Correlation&quot;</span><span class="p">),</span>
+<span class="n">labels</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Misdaad Indicators&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Economische Indicators&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;Correlatie&quot;</span><span class="p">),</span>
 <span class="n">x</span><span class="o">=</span><span class="n">econ_crime_corr</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
 <span class="n">y</span><span class="o">=</span><span class="n">econ_crime_corr</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
 <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s2">&quot;RdBu&quot;</span><span class="p">,</span>
 <span class="n">zmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Correlation Between Selected Economic and Crime Indicators&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Correlatie tussen Economische indicators en misdaad indicators&quot;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
-<span class="nn">/tmp/ipykernel_115582/1095617143.py</span> in <span class="ni">?</span><span class="nt">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">36</span> <span class="n">econ_pivot</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="g g-Whitespace">     </span><span class="mi">37</span> 
-<span class="g g-Whitespace">     </span><span class="mi">38</span> 
-<span class="g g-Whitespace">     </span><span class="mi">39</span> <span class="c1"># Merge on Country and Year</span>
-<span class="ne">---&gt; </span><span class="mi">40</span> <span class="n">merged_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">econ_pivot</span><span class="p">,</span> <span class="n">crime_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">])</span>
-<span class="g g-Whitespace">     </span><span class="mi">41</span> 
-<span class="g g-Whitespace">     </span><span class="mi">42</span> <span class="c1"># Drop rows with missing values</span>
-<span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="n">merged_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="nn">~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/reshape/merge.py</span> in <span class="ni">?</span><span class="nt">(left, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, copy, indicator, validate)</span>
-<span class="g g-Whitespace">    </span><span class="mi">166</span>             <span class="n">validate</span><span class="o">=</span><span class="n">validate</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">167</span>             <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">168</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">169</span>     <span class="k">else</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">170</span>         <span class="n">op</span> <span class="o">=</span> <span class="n">_MergeOperation</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">171</span>             <span class="n">left_df</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">172</span>             <span class="n">right_df</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">173</span>             <span class="n">how</span><span class="o">=</span><span class="n">how</span><span class="p">,</span>
-
-<span class="nn">~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/reshape/merge.py</span> in <span class="ni">?</span><span class="nt">(self, left, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, indicator, validate)</span>
-<span class="g g-Whitespace">    </span><span class="mi">790</span>             <span class="bp">self</span><span class="o">.</span><span class="n">right_join_keys</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">791</span>             <span class="bp">self</span><span class="o">.</span><span class="n">join_names</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">792</span>             <span class="n">left_drop</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">793</span>             <span class="n">right_drop</span><span class="p">,</span>
-<span class="ne">--&gt; </span><span class="mi">794</span>         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_merge_keys</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">795</span> 
-<span class="g g-Whitespace">    </span><span class="mi">796</span>         <span class="k">if</span> <span class="n">left_drop</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">797</span>             <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">_drop_labels_or_levels</span><span class="p">(</span><span class="n">left_drop</span><span class="p">)</span>
-
-<span class="nn">~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/reshape/merge.py</span> in <span class="ni">?</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1293</span>                         <span class="c1"># Then we&#39;re either Hashable or a wrong-length arraylike,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1294</span>                         <span class="c1">#  the latter of which will raise</span>
-<span class="g g-Whitespace">   </span><span class="mi">1295</span>                         <span class="n">rk</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Hashable</span><span class="p">,</span> <span class="n">rk</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1296</span>                         <span class="k">if</span> <span class="n">rk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1297</span>                             <span class="n">right_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">_get_label_or_level_values</span><span class="p">(</span><span class="n">rk</span><span class="p">))</span>
-<span class="g g-Whitespace">   </span><span class="mi">1298</span>                         <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1299</span>                             <span class="c1"># work-around for merge_asof(right_index=True)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1300</span>                             <span class="n">right_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">_values</span><span class="p">)</span>
-
-<span class="nn">~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/core/generic.py</span> in <span class="ni">?</span><span class="nt">(self, key, axis)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1907</span>             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">other_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">_values</span>
-<span class="g g-Whitespace">   </span><span class="mi">1908</span>         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_level_reference</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">1909</span>             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">_values</span>
-<span class="g g-Whitespace">   </span><span class="mi">1910</span>         <span class="k">else</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1911</span>             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1912</span> 
-<span class="g g-Whitespace">   </span><span class="mi">1913</span>         <span class="c1"># Check for duplicates</span>
-<span class="g g-Whitespace">   </span><span class="mi">1914</span>         <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-
-<span class="ne">KeyError</span>: &#39;Country Name&#39;
-</pre></div>
-</div>
 </div>
 </div>
 <blockquote>
-<div><p><em>Figuur 1: uitleg wat er te zien is</em></p>
+<div><p><em>Figuur 1: Een heatmap over de correlaties tussen economische indicators en misdaad indicators</em></p>
 </div></blockquote>
 <p>Verklaringen voor figuur 1, waarom past het bij het perspectief</p>
 <p>Je kan zien dat misdaden die met geld, kidnappen en sexuele activiteiten te maken hebben meer gebeuren in rijkere landen WANT VARIABELE 1, 2 CORRELEREN MET… , terwijl corruptie en moord juist meer gebeurt in minder rijke landen. Vaak is ongelijkheid ook een vorm van corruptie, dus dit is logisch.</p>
@@ -570,16 +521,104 @@ document.write(`
 <p>Uitleg andere bronnen, logica</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">dash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash</span><span class="w"> </span><span class="kn">import</span> <span class="n">dcc</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+
+<span class="c1"># Load and prepare the data</span>
+<span class="n">police_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;europe_justice_per_100k.csv&quot;</span><span class="p">)</span>
+<span class="n">crime_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;europe_crime_definitive_per_100k.csv&quot;</span><span class="p">)</span>
+
+<span class="n">police_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;TIME_PERIOD&quot;</span><span class="p">:</span> <span class="s2">&quot;Year&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">crime_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;TIME_PERIOD&quot;</span><span class="p">:</span> <span class="s2">&quot;Year&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Filter and merge</span>
+<span class="n">police_df</span> <span class="o">=</span> <span class="n">police_df</span><span class="p">[[</span><span class="s2">&quot;geo&quot;</span><span class="p">,</span> <span class="s2">&quot;Year&quot;</span><span class="p">,</span> <span class="s2">&quot;Police officers&quot;</span><span class="p">]]</span>
+<span class="n">crime_df</span> <span class="o">=</span> <span class="n">crime_df</span><span class="p">[[</span><span class="s2">&quot;geo&quot;</span><span class="p">,</span> <span class="s2">&quot;Year&quot;</span><span class="p">,</span> <span class="s2">&quot;Theft&quot;</span><span class="p">]]</span>
+<span class="n">merged_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">police_df</span><span class="p">,</span> <span class="n">crime_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;geo&quot;</span><span class="p">,</span> <span class="s2">&quot;Year&quot;</span><span class="p">])</span>
+<span class="n">merged_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Police officers&quot;</span><span class="p">,</span> <span class="s2">&quot;Theft&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Melt for dual-line plotting</span>
+<span class="n">melted</span> <span class="o">=</span> <span class="n">merged_df</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;geo&quot;</span><span class="p">,</span> <span class="s2">&quot;Year&quot;</span><span class="p">],</span>
+                        <span class="n">value_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Police officers&quot;</span><span class="p">,</span> <span class="s2">&quot;Theft&quot;</span><span class="p">],</span>
+                        <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Metric&quot;</span><span class="p">,</span>
+                        <span class="n">value_name</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get unique countries</span>
+<span class="n">countries</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">melted</span><span class="p">[</span><span class="s2">&quot;geo&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+
+<span class="c1"># Build the Dash app</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="o">.</span><span class="n">Dash</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">([</span>
+
+    <span class="n">dcc</span><span class="o">.</span><span class="n">Dropdown</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;country-selector&#39;</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">c</span><span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">countries</span><span class="p">],</span>
+        <span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;AL&quot;</span><span class="p">],</span>  <span class="c1"># Default selected</span>
+        <span class="n">multi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Select one or more countries&quot;</span>
+    <span class="p">),</span>
+
+    <span class="n">dcc</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;line-chart&#39;</span><span class="p">)</span>
+<span class="p">])</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s1">&#39;line-chart&#39;</span><span class="p">,</span> <span class="s1">&#39;figure&#39;</span><span class="p">),</span>
+    <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s1">&#39;country-selector&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_chart</span><span class="p">(</span><span class="n">selected_countries</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">selected_countries</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;No countries selected&quot;</span><span class="p">)</span>
+
+    <span class="n">filtered</span> <span class="o">=</span> <span class="n">melted</span><span class="p">[</span><span class="n">melted</span><span class="p">[</span><span class="s2">&quot;geo&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">selected_countries</span><span class="p">)]</span>
+
+    <span class="c1"># Build line plot with metric as line type, country as color</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+        <span class="n">filtered</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Year&quot;</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;geo&quot;</span><span class="p">,</span>
+        <span class="n">line_dash</span><span class="o">=</span><span class="s2">&quot;Metric&quot;</span><span class="p">,</span>  <span class="c1"># Different dash style for &#39;Police officers&#39; vs &#39;Theft&#39;</span>
+        <span class="n">markers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Police Officers and Theft Rate Over Time&quot;</span><span class="p">,</span>
+        <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;geo&quot;</span><span class="p">:</span> <span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="s2">&quot;Rate per 100k&quot;</span><span class="p">,</span> <span class="s2">&quot;Year&quot;</span><span class="p">:</span> <span class="s2">&quot;Year&quot;</span><span class="p">,</span> <span class="s2">&quot;Metric&quot;</span><span class="p">:</span> <span class="s2">&quot;Type&quot;</span><span class="p">},</span>
+        <span class="n">height</span><span class="o">=</span><span class="mi">600</span>
+    <span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">autorange</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fig</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Address already in use
+Port 8050 is in use by another program. Either identify and stop that program, or start the server with a different port.
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">An</span> <span class="n">exception</span> <span class="n">has</span> <span class="n">occurred</span><span class="p">,</span> <span class="n">use</span> <span class="o">%</span><span class="k">tb</span> to see the full traceback.
+
+<span class="ne">SystemExit</span>: 1
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/IPython/core/interactiveshell.py:3587: UserWarning:
+
+To exit: use &#39;exit&#39;, &#39;quit&#39;, or Ctrl-D.
 </pre></div>
 </div>
 </div>
 </div>
 <blockquote>
-<div><p><em>Figuur 2: Uitleg wat er te zien is, nog geen verklaring</em></p>
+<div><p><em>Figuur 2: Een Lijn Grafiek die de hoeveelheid Politieagenten en de hoeveelheid Diefstal laat zien per jaar, met een menu waar je de landen kan kiezen waar je de data van wil hebben</em></p>
 </div></blockquote>
-<p>Recap + verklaring van wat er te zien is in figuur 2</p>
+<p>Recap + De grafiek toont de ontwikkeling van het aantal politieagenten en het aantal geregistreerde diefstallen per land over meerdere jaren. Wat opvalt, is dat er niet altijd een directe of omgekeerde relatie is tussen meer politiepersoneel en minder criminaliteit. In sommige landen daalt het aantal diefstallen ondanks een afname van het politieapparaat, terwijl in andere landen een stijging van het aantal agenten samengaat met meer meldingen van diefstal. Dit suggereert dat andere factoren zoals sociale omstandigheden, wetgeving, meldingsbereidheid en economische situatie ook een grote rol spelen bij criminaliteitscijfers. De grafiek benadrukt dus dat het aantal politieagenten op zichzelf geen garantie is voor minder criminaliteit, maar slechts één van de vele beïnvloedende factoren.</p>
 </section>
 </section>
 
