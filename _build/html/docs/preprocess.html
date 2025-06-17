@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -480,7 +480,7 @@ document.write(`
 <span class="c1"># Load the dataset</span>
 <span class="n">eu_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_off_cat_filtered_en.csv&quot;</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">convert_and_pivot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">preferred_unit</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_and_pivot_eu_crime</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">preferred_unit</span><span class="p">):</span>
     <span class="c1"># Validate unit</span>
     <span class="k">if</span> <span class="n">preferred_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Number&#39;</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Preferred unit must be &#39;Number&#39; or &#39;Per hundred thousand inhabitants&#39;.&quot;</span><span class="p">)</span>
@@ -498,8 +498,8 @@ document.write(`
     <span class="k">return</span> <span class="n">pivot_df</span>
 
 <span class="c1"># usage</span>
-<span class="n">eu_converted_per_100k</span> <span class="o">=</span> <span class="n">convert_and_pivot</span><span class="p">(</span><span class="n">eu_df</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">)</span>
-<span class="n">eu_converted_absolute</span> <span class="o">=</span> <span class="n">convert_and_pivot</span><span class="p">(</span><span class="n">eu_df</span><span class="p">,</span> <span class="s1">&#39;Number&#39;</span><span class="p">)</span>
+<span class="n">eu_converted_per_100k</span> <span class="o">=</span> <span class="n">convert_and_pivot_eu_crime</span><span class="p">(</span><span class="n">eu_df</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">)</span>
+<span class="n">eu_converted_absolute</span> <span class="o">=</span> <span class="n">convert_and_pivot_eu_crime</span><span class="p">(</span><span class="n">eu_df</span><span class="p">,</span> <span class="s1">&#39;Number&#39;</span><span class="p">)</span>
 
 <span class="c1"># Save the result</span>
 <span class="n">output_path_per_100k</span> <span class="o">=</span> <span class="s1">&#39;europe_crime_definitive_per_100k.csv&#39;</span>
@@ -509,75 +509,61 @@ document.write(`
 <span class="n">output_path_absolute</span> <span class="o">=</span> <span class="s1">&#39;europe_crime_definitive_absolute.csv&#39;</span>
 <span class="n">eu_converted_absolute</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_absolute</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtered and pivoted data saved to </span><span class="si">{</span><span class="n">output_path_absolute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Filtered and pivoted data saved to europe_crime_definitive_per_100k.csv
-Filtered and pivoted data saved to europe_crime_definitive_absolute.csv
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="c1">########################################################################</span>
-<span class="c1">#Sort economy and gini to only use countries also present in eu dataset#</span>
-<span class="c1">########################################################################</span>
+<span class="c1">#############################</span>
+<span class="c1">#Police &amp; justice statistics#</span>
+<span class="c1">#############################</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">filter_to_european_countries</span><span class="p">(</span><span class="n">crime_file</span><span class="p">,</span> <span class="n">gini_file</span><span class="p">,</span> <span class="n">world_bank_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Filters the gini and world bank datasets to include only countries present in the european crime dataset.</span>
+<span class="c1"># same code because same structure, just &#39;columns&#39; renamed appropriately</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_and_pivot_eu_justice</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">preferred_unit</span><span class="p">):</span>
+    <span class="c1"># Validate unit</span>
+    <span class="k">if</span> <span class="n">preferred_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Number&#39;</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Preferred unit must be &#39;Number&#39; or &#39;Per hundred thousand inhabitants&#39;.&quot;</span><span class="p">)</span>
 
-<span class="sd">    Parameters:</span>
-<span class="sd">        crime_file (str): Path to &#39;europe_crime_definitive.csv&#39;</span>
-<span class="sd">        gini_file (pd.df): Gini file in long format</span>
-<span class="sd">        world_bank_file (pd.df): World bank file in long format</span>
+    <span class="c1"># Filter based on unit of measure</span>
+    <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Unit of measure&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">preferred_unit</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        Tuple of filtered DataFrames: (filtered_gini_df, filtered_world_bank_df)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Load the crime dataset</span>
-    <span class="n">crime_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">crime_file</span><span class="p">)</span>
-    
-    <span class="c1"># Extract unique country names</span>
-    <span class="n">european_countries</span> <span class="o">=</span> <span class="n">crime_df</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-    
-    <span class="c1"># Load GINI and World Bank datasets</span>
-    <span class="n">gini_df</span> <span class="o">=</span> <span class="n">gini_file</span>
-    <span class="n">world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_file</span>
-    
-    <span class="c1"># Filter GINI and World Bank datasets to only include European countries</span>
-    <span class="n">filtered_gini_df</span> <span class="o">=</span> <span class="n">gini_df</span><span class="p">[</span><span class="n">gini_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">filtered_world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_df</span><span class="p">[</span><span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    
-    <span class="k">return</span> <span class="n">filtered_gini_df</span><span class="p">,</span> <span class="n">filtered_world_bank_df</span>
+    <span class="c1"># Pivot so each ICCS crime type becomes a column</span>
+    <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">filtered_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">,</span><span class="s1">&#39;geo&#39;</span><span class="p">,</span> <span class="s1">&#39;TIME_PERIOD&#39;</span><span class="p">],</span>
+        <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;International Standard Classification of Occupations 2008 (ISCO-08)&#39;</span><span class="p">,</span>
+        <span class="n">values</span><span class="o">=</span><span class="s1">&#39;OBS_VALUE&#39;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
-<span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span> <span class="o">=</span> <span class="n">filter_to_european_countries</span><span class="p">(</span><span class="s1">&#39;europe_crime_definitive.csv&#39;</span><span class="p">,</span> <span class="n">gini_long_format</span><span class="p">,</span> <span class="n">world_bank_long_format</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pivot_df</span>
+
+<span class="c1"># read file</span>
+<span class="n">eu_justice_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_just_job_filtered_en.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># convert file</span>
+<span class="n">eu_justice_absolute</span> <span class="o">=</span> <span class="n">convert_and_pivot_eu_justice</span><span class="p">(</span><span class="n">eu_justice_df</span><span class="p">,</span> <span class="s1">&#39;Number&#39;</span><span class="p">)</span>
+<span class="n">eu_justice_per_100k</span> <span class="o">=</span> <span class="n">convert_and_pivot_eu_justice</span><span class="p">(</span><span class="n">eu_justice_df</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># save to files</span>
+<span class="n">output_path_justice_absolute</span> <span class="o">=</span> <span class="s2">&quot;europe_justice_absolute.csv&quot;</span>
+<span class="n">output_path_justice_per_100k</span> <span class="o">=</span> <span class="s2">&quot;europe_justice_per_100k.csv&quot;</span>
+<span class="n">eu_justice_absolute</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_absolute</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">eu_justice_per_100k</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_justice_per_100k</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Both justice csvs saved to their paths&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">35</span>
-<span class="g g-Whitespace">     </span><span class="mi">31</span>     <span class="n">filtered_world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_df</span><span class="p">[</span><span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">33</span>     <span class="k">return</span> <span class="n">filtered_gini_df</span><span class="p">,</span> <span class="n">filtered_world_bank_df</span>
-<span class="ne">---&gt; </span><span class="mi">35</span> <span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span> <span class="o">=</span> <span class="n">filter_to_european_countries</span><span class="p">(</span><span class="s1">&#39;europe_crime_definitive.csv&#39;</span><span class="p">,</span> <span class="n">gini_long_format</span><span class="p">,</span> <span class="n">world_bank_long_format</span><span class="p">)</span>
-
-<span class="nn">Cell In[2], line 20,</span> in <span class="ni">filter_to_european_countries</span><span class="nt">(crime_file, gini_file, world_bank_file)</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span><span class="sd"> Filters the gini and world bank datasets to include only countries present in the european crime dataset.</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span><span class="sd"> </span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span><span class="sd">     Tuple of filtered DataFrames: (filtered_gini_df, filtered_world_bank_df)</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="c1"># Load the crime dataset</span>
-<span class="ne">---&gt; </span><span class="mi">20</span> <span class="n">crime_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">crime_file</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="c1"># Extract unique country names</span>
-<span class="g g-Whitespace">     </span><span class="mi">23</span> <span class="n">european_countries</span> <span class="o">=</span> <span class="n">crime_df</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">37</span>
+<span class="g g-Whitespace">     </span><span class="mi">28</span> <span class="n">gini_long_format</span> <span class="o">=</span> <span class="n">convert_wide_to_long</span><span class="p">(</span><span class="n">filepath2</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">31</span> <span class="c1">###############################################################################</span>
+<span class="g g-Whitespace">     </span><span class="mi">32</span> <span class="c1"># EU dataset pivot so that the different types of crime get their own columns #</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="c1"># and columns with unnecessary (for us) metadata are omitted                  #</span>
+<span class="g g-Whitespace">     </span><span class="mi">34</span> <span class="c1">###############################################################################</span>
+<span class="g g-Whitespace">     </span><span class="mi">35</span> 
+<span class="g g-Whitespace">     </span><span class="mi">36</span> <span class="c1"># Load the dataset</span>
+<span class="ne">---&gt; </span><span class="mi">37</span> <span class="n">eu_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_off_cat_filtered_en.csv&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">39</span> <span class="k">def</span><span class="w"> </span><span class="nf">convert_and_pivot_eu_crime</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">preferred_unit</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="c1"># Validate unit</span>
+<span class="g g-Whitespace">     </span><span class="mi">41</span>     <span class="k">if</span> <span class="n">preferred_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Number&#39;</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">]:</span>
 
 <span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1026,</span> in <span class="ni">read_csv</span><span class="nt">(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)</span>
 <span class="g g-Whitespace">   </span><span class="mi">1013</span> <span class="n">kwds_defaults</span> <span class="o">=</span> <span class="n">_refine_defaults_read</span><span class="p">(</span>
@@ -634,7 +620,48 @@ Filtered and pivoted data saved to europe_crime_definitive_absolute.csv
 <span class="g g-Whitespace">    </span><span class="mi">881</span>         <span class="c1"># Binary mode</span>
 <span class="g g-Whitespace">    </span><span class="mi">882</span>         <span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">ioargs</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
 
-<span class="ne">FileNotFoundError</span>: [Errno 2] No such file or directory: &#39;europe_crime_definitive.csv&#39;
+<span class="ne">FileNotFoundError</span>: [Errno 2] No such file or directory: &#39;/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_off_cat_filtered_en.csv&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1">########################################################################</span>
+<span class="c1">#Sort economy and gini to only use countries also present in eu dataset#</span>
+<span class="c1">########################################################################</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_to_european_countries</span><span class="p">(</span><span class="n">crime_file</span><span class="p">,</span> <span class="n">gini_file</span><span class="p">,</span> <span class="n">world_bank_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters the gini and world bank datasets to include only countries present in the european crime dataset.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        crime_file (str): Path to &#39;europe_crime_definitive.csv&#39;</span>
+<span class="sd">        gini_file (pd.df): Gini file in long format</span>
+<span class="sd">        world_bank_file (pd.df): World bank file in long format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of filtered DataFrames: (filtered_gini_df, filtered_world_bank_df)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load the crime dataset</span>
+    <span class="n">crime_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">crime_file</span><span class="p">)</span>
+    
+    <span class="c1"># Extract unique country names</span>
+    <span class="n">european_countries</span> <span class="o">=</span> <span class="n">crime_df</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    
+    <span class="c1"># Load GINI and World Bank datasets</span>
+    <span class="n">gini_df</span> <span class="o">=</span> <span class="n">gini_file</span>
+    <span class="n">world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_file</span>
+    
+    <span class="c1"># Filter GINI and World Bank datasets to only include European countries</span>
+    <span class="n">filtered_gini_df</span> <span class="o">=</span> <span class="n">gini_df</span><span class="p">[</span><span class="n">gini_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">filtered_world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_df</span><span class="p">[</span><span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">filtered_gini_df</span><span class="p">,</span> <span class="n">filtered_world_bank_df</span>
+
+<span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span> <span class="o">=</span> <span class="n">filter_to_european_countries</span><span class="p">(</span><span class="s1">&#39;europe_crime_definitive_per_100k.csv&#39;</span><span class="p">,</span> <span class="n">gini_long_format</span><span class="p">,</span> <span class="n">world_bank_long_format</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
