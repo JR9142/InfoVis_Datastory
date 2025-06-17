@@ -22,39 +22,58 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 
-# Read the data from table1.csv
-df = pd.read_csv('table1.csv')
+# Read the data from table2.csv
+df2 = pd.read_csv('table2.csv')
 
-# Create the line plot with Plotly
-fig = px.line(df, x="Jaartal", y="Labour strikes", title='Number of labour strikes per year')
+# Initialize a figure
+fig2 = go.Figure()
+
+# Create the first line
+fig2.add_trace(
+    go.Scatter(
+        x=df2["Jaartal"], 
+        y=df2["Workers involved (x 1,000)"],
+        mode='lines+markers',
+        line=dict(color='#00a1cd', width=2),
+        marker=dict(color='#00a1cd', size=5),
+        name="Workers involved",
+        hovertemplate='<b>%{x}</b><br>Workers involved: <b>%{y} thousand</b> <extra></extra>'
+    )
+)
+
+# Create the second line
+fig2.add_trace(
+    go.Scatter(
+        x=df2["Jaartal"], 
+        y=df2["Working days lost (x 1,000)"],
+        mode='lines+markers',
+        line=dict(color='#0058b8', width=2),
+        marker=dict(color='#0058b8', size=5),
+        name="Working days lost",
+        hovertemplate='<b>%{x}</b><br>Working days lost: <b>%{y} thousand</b> <extra></extra>'
+    )
+)
 
 # Customize the plot layout
-fig.update_layout(
+fig2.update_layout(
     plot_bgcolor='white',
-    height=400,
     xaxis=dict(title='Years'),
-    yaxis=dict(title='')  # Remove y-axis tick labels
+    yaxis=dict(title=''),  # Remove y-axis tick labels
+    legend=dict(title='', orientation='h', yanchor='bottom', y=-0.3, xanchor='right', x=0.3),  # Update legend settings
+    title="Number of workers involved and working<br>days lost during strikes (in thousand)",
+    height=500
 )
 
-# Add blue small circles when hovering over a point
-fig.update_traces(
-    mode='lines+markers',
-    hovertemplate='<b>%{x}</b><br>Labor strikes: <b>%{y}</b>' +
-                  '<extra></extra>',  # Use <extra></extra> to disable default hover info
-    line=dict(color='#00a1cd', width=2),
-    marker=dict(color='#00a1cd', size=5),
-)
-
-# Add horizontal lines at y = 0, 10, 20, 30, and 40
-y_values = [0, 10, 20, 30, 40]
+# Add horizontal lines at y = 0, 100, 200, 300, 400, and 500
+y_values = [0, 100, 200, 300, 400, 500]
 for y in y_values:
-    fig.add_shape(
+    fig2.add_shape(
         type='line',
-        x0=min(df['Jaartal']),
-        x1=max(df['Jaartal']),
+        x0=min(df2['Jaartal']),
+        x1=max(df2['Jaartal']),
         y0=y,
         y1=y,
         line=dict(color='black'),
@@ -62,7 +81,7 @@ for y in y_values:
     )
 
 # Show the plot
-fig.show()
+fig2.show()
 ------------------
 
 
@@ -70,10 +89,10 @@ fig.show()
 [0;31mFileNotFoundError[0m                         Traceback (most recent call last)
 Cell [0;32mIn[2], line 5[0m
 [1;32m      2[0m [38;5;28;01mimport[39;00m[38;5;250m [39m[38;5;21;01mpandas[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[38;5;21;01mpd[39;00m
-[1;32m      4[0m [38;5;66;03m# Read the data from table1.csv[39;00m
-[0;32m----> 5[0m df [38;5;241m=[39m [43mpd[49m[38;5;241;43m.[39;49m[43mread_csv[49m[43m([49m[38;5;124;43m'[39;49m[38;5;124;43mtable1.csv[39;49m[38;5;124;43m'[39;49m[43m)[49m
-[1;32m      7[0m [38;5;66;03m# Create the line plot with Plotly[39;00m
-[1;32m      8[0m fig [38;5;241m=[39m px[38;5;241m.[39mline(df, x[38;5;241m=[39m[38;5;124m"[39m[38;5;124mJaartal[39m[38;5;124m"[39m, y[38;5;241m=[39m[38;5;124m"[39m[38;5;124mLabour strikes[39m[38;5;124m"[39m, title[38;5;241m=[39m[38;5;124m'[39m[38;5;124mNumber of labour strikes per year[39m[38;5;124m'[39m)
+[1;32m      4[0m [38;5;66;03m# Read the data from table2.csv[39;00m
+[0;32m----> 5[0m df2 [38;5;241m=[39m [43mpd[49m[38;5;241;43m.[39;49m[43mread_csv[49m[43m([49m[38;5;124;43m'[39;49m[38;5;124;43mtable2.csv[39;49m[38;5;124;43m'[39;49m[43m)[49m
+[1;32m      7[0m [38;5;66;03m# Initialize a figure[39;00m
+[1;32m      8[0m fig2 [38;5;241m=[39m go[38;5;241m.[39mFigure()
 
 File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1026[0m, in [0;36mread_csv[0;34m(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)[0m
 [1;32m   1013[0m kwds_defaults [38;5;241m=[39m _refine_defaults_read(
@@ -130,5 +149,5 @@ File [0;32m~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io
 [1;32m    881[0m         [38;5;66;03m# Binary mode[39;00m
 [1;32m    882[0m         handle [38;5;241m=[39m [38;5;28mopen[39m(handle, ioargs[38;5;241m.[39mmode)
 
-[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: 'table1.csv'
+[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: 'table2.csv'
 
