@@ -403,6 +403,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datasets-kiezen">Datasets kiezen</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variabelen">Variabelen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gebruikte-code">Gebruikte code</a></li>
 </ul>
             </nav>
         </div>
@@ -428,6 +429,11 @@ document.write(`
 </section>
 <section id="variabelen">
 <h2>Variabelen<a class="headerlink" href="#variabelen" title="Link to this heading">#</a></h2>
+<p>Beschrijving van de gebruikte variabelen</p>
+<p>Lorem ipsum si dolor amet</p>
+</section>
+<section id="gebruikte-code">
+<h2>Gebruikte code<a class="headerlink" href="#gebruikte-code" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -481,6 +487,21 @@ document.write(`
 
 <span class="c1"># save to new file</span>
 <span class="n">df_pivot</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;europe_crime_definitive.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="c1">######################################################</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="c1"># Converting wide-format datasets to long-format ones#</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1">######################################################</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="k">def</span><span class="w"> </span><span class="nf">convert_wide_to_long</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Year&quot;</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span><span class="p">):</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>     <span class="c1"># Load the CSV file</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;pandas&#39;
 </pre></div>
 </div>
 </div>
@@ -622,6 +643,7 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datasets-kiezen">Datasets kiezen</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variabelen">Variabelen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gebruikte-code">Gebruikte code</a></li>
 </ul>
   </nav></div>
 
