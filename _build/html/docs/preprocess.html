@@ -419,13 +419,11 @@ document.write(`
 <h1>Data preprocessing TO DO: filter op variabelen die wij interessant vinden.<a class="headerlink" href="#data-preprocessing-to-do-filter-op-variabelen-die-wij-interessant-vinden" title="Link to this heading">#</a></h1>
 <section id="datasets-kiezen">
 <h2>Datasets kiezen<a class="headerlink" href="#datasets-kiezen" title="Link to this heading">#</a></h2>
-<p>Wij hebben drie datasets gekozen om te vergelijken. Als eerste hebben wij de dataset “Police-recorded offences by offence category” van Eurostat genomen om verschillende soorten criminaliteit in Europese landen te bepalen.  AF MAKEN</p>
-<p>Als tweede hebben wij de database “Economy &amp; Growth” van de World Bank Group om algemene economische factoren in landen te kunnen vergelijken.</p>
-<p>Ten derde hebben we de dataset “Povery and Inequality platform. (Gini Index)”, ook van World Bank, als een eenvoudige manier om de economische ongelijkheid per land te kunnen vergelijken.</p>
+<p>Wij hebben drie datasets gekozen om te vergelijken. Als eerste hebben wij de dataset “Police-recorded offences by offence category”</p>
 <p>Het data preprocessen gebeurde in een aantal stappen. Wij hebben hier python code gebruikt met de pandas library.</p>
 <ol class="arabic simple">
 <li><p>De database “Police-recorded offences by offence category” van de EU hebben wij omgevormd zodat iedere soort misdaad een eigen kolom kreeg.</p></li>
-<li><p>Wij hebben de andere twee datasets, “Economy &amp; Growth” en “World Bank, Poverty and Inequality Platform. (Gini Index)” omgevormd van ‘wide’ naar ‘long-format’ zodat we de drie makkelijker samen kunnen gebruiken.</p></li>
+<li><p>Wij hebben de andere twee databases, “Economy &amp; Growth” en “World Bank, Poverty and Inequality Platform. (Gini Index)” omgevormd van ‘wide’ naar ‘long-format’.</p></li>
 <li><p>Wij hebben deze laatste twee databases gefilterd op jaar en land, zodat alleen die jaren en landen die voor komen in de EU database over blijven.</p></li>
 </ol>
 </section>
@@ -478,17 +476,43 @@ document.write(`
 <span class="c1">###############################################################################</span>
 
 <span class="c1"># Load the dataset</span>
-<span class="n">eu_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;og_csv_files/estat_crim_off_cat_filtered_en.csv&quot;</span><span class="p">)</span>
+<span class="n">eu_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;/home/jason/huiswerk/Semester 2/information visualisation/datastory/InfoVis_Datastory/docs/og_csv_files/estat_crim_off_cat_filtered_en.csv&quot;</span><span class="p">)</span>
 
-<span class="c1"># Pivot the data so that all types of crime have their own column</span>
-<span class="n">df_pivot</span> <span class="o">=</span> <span class="n">eu_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Geopolitical entity (reporting)&quot;</span><span class="p">,</span> <span class="s2">&quot;TIME_PERIOD&quot;</span><span class="p">],</span>
-    <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;International classification of crime for statistical purposes (ICCS)&quot;</span><span class="p">,</span>
-    <span class="n">values</span><span class="o">=</span><span class="s2">&quot;OBS_VALUE&quot;</span>
-<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_and_pivot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">preferred_unit</span><span class="p">):</span>
+    <span class="c1"># Validate unit</span>
+    <span class="k">if</span> <span class="n">preferred_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Number&#39;</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Preferred unit must be &#39;Number&#39; or &#39;Per hundred thousand inhabitants&#39;.&quot;</span><span class="p">)</span>
 
-<span class="c1"># save to new file</span>
-<span class="n">df_pivot</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;europe_crime_definitive.csv&quot;</span><span class="p">)</span>
+    <span class="c1"># Filter based on unit of measure</span>
+    <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Unit of measure&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">preferred_unit</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Pivot so each ICCS crime type becomes a column</span>
+    <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">filtered_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">,</span> <span class="s1">&#39;TIME_PERIOD&#39;</span><span class="p">],</span>
+        <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;International classification of crime for statistical purposes (ICCS)&#39;</span><span class="p">,</span>
+        <span class="n">values</span><span class="o">=</span><span class="s1">&#39;OBS_VALUE&#39;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">pivot_df</span>
+
+<span class="c1"># usage</span>
+<span class="n">eu_converted_per_100k</span> <span class="o">=</span> <span class="n">convert_and_pivot</span><span class="p">(</span><span class="n">eu_df</span><span class="p">,</span> <span class="s1">&#39;Per hundred thousand inhabitants&#39;</span><span class="p">)</span>
+<span class="n">eu_converted_absolute</span> <span class="o">=</span> <span class="n">convert_and_pivot</span><span class="p">(</span><span class="n">eu_df</span><span class="p">,</span> <span class="s1">&#39;Number&#39;</span><span class="p">)</span>
+
+<span class="c1"># Save the result</span>
+<span class="n">output_path_per_100k</span> <span class="o">=</span> <span class="s1">&#39;europe_crime_definitive_per_100k.csv&#39;</span>
+<span class="n">eu_converted_per_100k</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_per_100k</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtered and pivoted data saved to </span><span class="si">{</span><span class="n">output_path_per_100k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">output_path_absolute</span> <span class="o">=</span> <span class="s1">&#39;europe_crime_definitive_absolute.csv&#39;</span>
+<span class="n">eu_converted_absolute</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path_absolute</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtered and pivoted data saved to </span><span class="si">{</span><span class="n">output_path_absolute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Filtered and pivoted data saved to europe_crime_definitive_per_100k.csv
+Filtered and pivoted data saved to europe_crime_definitive_absolute.csv
 </pre></div>
 </div>
 </div>
@@ -530,6 +554,85 @@ document.write(`
     <span class="k">return</span> <span class="n">filtered_gini_df</span><span class="p">,</span> <span class="n">filtered_world_bank_df</span>
 
 <span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span> <span class="o">=</span> <span class="n">filter_to_european_countries</span><span class="p">(</span><span class="s1">&#39;europe_crime_definitive.csv&#39;</span><span class="p">,</span> <span class="n">gini_long_format</span><span class="p">,</span> <span class="n">world_bank_long_format</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">35</span>
+<span class="g g-Whitespace">     </span><span class="mi">31</span>     <span class="n">filtered_world_bank_df</span> <span class="o">=</span> <span class="n">world_bank_df</span><span class="p">[</span><span class="n">world_bank_df</span><span class="p">[</span><span class="s1">&#39;Country Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">european_countries</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span>     <span class="k">return</span> <span class="n">filtered_gini_df</span><span class="p">,</span> <span class="n">filtered_world_bank_df</span>
+<span class="ne">---&gt; </span><span class="mi">35</span> <span class="n">gini_filtered</span><span class="p">,</span> <span class="n">world_bank_filtered</span> <span class="o">=</span> <span class="n">filter_to_european_countries</span><span class="p">(</span><span class="s1">&#39;europe_crime_definitive.csv&#39;</span><span class="p">,</span> <span class="n">gini_long_format</span><span class="p">,</span> <span class="n">world_bank_long_format</span><span class="p">)</span>
+
+<span class="nn">Cell In[2], line 20,</span> in <span class="ni">filter_to_european_countries</span><span class="nt">(crime_file, gini_file, world_bank_file)</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span><span class="sd"> Filters the gini and world bank datasets to include only countries present in the european crime dataset.</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span><span class="sd"> </span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span><span class="sd">     Tuple of filtered DataFrames: (filtered_gini_df, filtered_world_bank_df)</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="c1"># Load the crime dataset</span>
+<span class="ne">---&gt; </span><span class="mi">20</span> <span class="n">crime_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">crime_file</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="c1"># Extract unique country names</span>
+<span class="g g-Whitespace">     </span><span class="mi">23</span> <span class="n">european_countries</span> <span class="o">=</span> <span class="n">crime_df</span><span class="p">[</span><span class="s1">&#39;Geopolitical entity (reporting)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+<span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1026,</span> in <span class="ni">read_csv</span><span class="nt">(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1013</span> <span class="n">kwds_defaults</span> <span class="o">=</span> <span class="n">_refine_defaults_read</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1014</span>     <span class="n">dialect</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1015</span>     <span class="n">delimiter</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1022</span>     <span class="n">dtype_backend</span><span class="o">=</span><span class="n">dtype_backend</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1023</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1024</span> <span class="n">kwds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwds_defaults</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1026</span> <span class="k">return</span> <span class="n">_read</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="n">kwds</span><span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:620,</span> in <span class="ni">_read</span><span class="nt">(filepath_or_buffer, kwds)</span>
+<span class="g g-Whitespace">    </span><span class="mi">617</span> <span class="n">_validate_names</span><span class="p">(</span><span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="g g-Whitespace">    </span><span class="mi">619</span> <span class="c1"># Create the parser.</span>
+<span class="ne">--&gt; </span><span class="mi">620</span> <span class="n">parser</span> <span class="o">=</span> <span class="n">TextFileReader</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">622</span> <span class="k">if</span> <span class="n">chunksize</span> <span class="ow">or</span> <span class="n">iterator</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">623</span>     <span class="k">return</span> <span class="n">parser</span>
+
+<span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1620,</span> in <span class="ni">TextFileReader.__init__</span><span class="nt">(self, f, engine, **kwds)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1617</span>     <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;has_index_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s2">&quot;has_index_names&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">   </span><span class="mi">1619</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="p">:</span> <span class="n">IOHandles</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="ne">-&gt; </span><span class="mi">1620</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_engine</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1880,</span> in <span class="ni">TextFileReader._make_engine</span><span class="nt">(self, f, engine)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1878</span>     <span class="k">if</span> <span class="s2">&quot;b&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mode</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1879</span>         <span class="n">mode</span> <span class="o">+=</span> <span class="s2">&quot;b&quot;</span>
+<span class="ne">-&gt; </span><span class="mi">1880</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="o">=</span> <span class="n">get_handle</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1881</span>     <span class="n">f</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1882</span>     <span class="n">mode</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1883</span>     <span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encoding&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1884</span>     <span class="n">compression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;compression&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1885</span>     <span class="n">memory_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;memory_map&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1886</span>     <span class="n">is_text</span><span class="o">=</span><span class="n">is_text</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1887</span>     <span class="n">errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encoding_errors&quot;</span><span class="p">,</span> <span class="s2">&quot;strict&quot;</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1888</span>     <span class="n">storage_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_options&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1889</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1890</span> <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">1891</span> <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span>
+
+<span class="nn">File ~/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/pandas/io/common.py:873,</span> in <span class="ni">get_handle</span><span class="nt">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">868</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">869</span>     <span class="c1"># Check whether the filename is to be opened in binary mode.</span>
+<span class="g g-Whitespace">    </span><span class="mi">870</span>     <span class="c1"># Binary mode does not support &#39;encoding&#39; and &#39;newline&#39;.</span>
+<span class="g g-Whitespace">    </span><span class="mi">871</span>     <span class="k">if</span> <span class="n">ioargs</span><span class="o">.</span><span class="n">encoding</span> <span class="ow">and</span> <span class="s2">&quot;b&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ioargs</span><span class="o">.</span><span class="n">mode</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">872</span>         <span class="c1"># Encoding</span>
+<span class="ne">--&gt; </span><span class="mi">873</span>         <span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">874</span>             <span class="n">handle</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">875</span>             <span class="n">ioargs</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">876</span>             <span class="n">encoding</span><span class="o">=</span><span class="n">ioargs</span><span class="o">.</span><span class="n">encoding</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">877</span>             <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">878</span>             <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">879</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">880</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">881</span>         <span class="c1"># Binary mode</span>
+<span class="g g-Whitespace">    </span><span class="mi">882</span>         <span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">ioargs</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+
+<span class="ne">FileNotFoundError</span>: [Errno 2] No such file or directory: &#39;europe_crime_definitive.csv&#39;
 </pre></div>
 </div>
 </div>
