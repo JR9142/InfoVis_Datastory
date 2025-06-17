@@ -178,7 +178,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Data preprocessing TO DO: filter op variabelen die wij interessant vinden.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="perspectief1.html">Minder misdaad door minder welvaart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="perspectief2.html">Minder misdaad door sterkere handhaving</a></li>
-<li class="toctree-l1"><a class="reference internal" href="final.html">Reflection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="final.html">Reflectie</a></li>
 
 
 </ul>
@@ -426,7 +426,8 @@ document.write(`
 <h1>Data preprocessing TO DO: filter op variabelen die wij interessant vinden.<a class="headerlink" href="#data-preprocessing-to-do-filter-op-variabelen-die-wij-interessant-vinden" title="Link to this heading">#</a></h1>
 <section id="datasets-kiezen">
 <h2>Datasets kiezen<a class="headerlink" href="#datasets-kiezen" title="Link to this heading">#</a></h2>
-<p>Wij hebben drie datasets gekozen om te vergelijken. Als eerste hebben wij de dataset <a class="reference external" href="https://ec.europa.eu/eurostat/databrowser/view/crim_off_cat/default/table?lang=en&amp;amp;category=crim.crim_off">“Police-recorded offences by offence category”</a> van Eurostat om verschillende categorieën criminaliteit in de deelnemende landen te kunnen onderzoeken. Wij hebben geen dataset gevonden die meer landen verkende met eenzelfde diepgang, vandaar dat wij ons hebben toegespitst op alleen de landen die in deze dataset voor komen.</p>
+<p>Wij hebben vier datasets gekozen om te vergelijken. Als eerste hebben wij de dataset <a class="reference external" href="https://ec.europa.eu/eurostat/databrowser/view/crim_off_cat/default/table?lang=en&amp;amp;category=crim.crim_off">“Police-recorded offences by offence category”</a> van Eurostat om verschillende categorieën criminaliteit in de deelnemende landen te kunnen onderzoeken. Wij hebben geen dataset gevonden die meer landen verkende met eenzelfde diepgang, vandaar dat wij ons hebben toegespitst op alleen de landen die in deze dataset voor komen.</p>
+<p>Ook van Eurostat hebben wij de dataset <a class="reference external" href="https://ec.europa.eu/eurostat/databrowser/view/crim_just_job/default/table?lang=en">“Personnel in the criminal justice system by sex”</a> voor gegevens over de grootte van het rechtssysteem van ieder land. Wij hebben deze dataset voornamelijk gekozen om een eventuele correlatie tussen illegale activiteit en aantal politieagenten (per 100.000 inwoners) te identificeren</p>
 <p>Wij hebben ook de dataset <a class="reference external" href="https://data.worldbank.org/topic/economy-and-growth">“Economy &amp; Growth”</a> van World Bank Group gebruikt. Deze dataset bevat verschillende economische statistieken van een groot aantal landen over een lange periode. Deze gebruikten wij om correlaties te identificeren tussen de categorieën criminaliteit uit de Eurostat datbase, en verschillende economische factoren en -trends.</p>
 <p>Ten slotte hebben wij de dataset <a class="reference external" href="https://databank.worldbank.org/reports.aspx?source=2&amp;amp;series=SI.POV.GINI&amp;amp;country=">“World Bank, Poverty and Inequality Platform. (Gini Index)”</a>, ook van World bank group, gebruikt als een (versimpelde) weergave van de welvaartsongelijkheid in deelnemende landen.</p>
 </section>
@@ -435,7 +436,8 @@ document.write(`
 <p>Het data preprocessen gebeurde in een aantal stappen. Wij hebben hier python code gebruikt met de pandas library.</p>
 <ol class="arabic simple">
 <li><p>De dataset “Police-recorded offences by offence category” van de EU hebben wij omgevormd zodat iedere soort misdaad een eigen kolom kreeg.</p></li>
-<li><p>Wij hebben de andere twee dataset, “Economy &amp; Growth” en “World Bank, Poverty and Inequality Platform. (Gini Index)” omgevormd van ‘wide’ naar ‘long-format’.</p></li>
+<li><p>De dataset “Personnel in the criminal justice system by sex” hebben wij op dezelfde manier omgevormd zodat ieder beroep een eigen kolom kreeg.</p></li>
+<li><p>Wij hebben de andere twee datasets, “Economy &amp; Growth” en “World Bank, Poverty and Inequality Platform. (Gini Index)” omgevormd van ‘wide’ naar ‘long-format’.</p></li>
 <li><p>Wij hebben deze laatste twee databases gefilterd op jaar en land, zodat alleen de jaren en landen die voor komen in de EU database over blijven. Op deze manier kunnen we voor de EU landen correlaties tussen economische variabelen en verschillende soorten criminaliteit identificeren.</p></li>
 </ol>
 </section>
