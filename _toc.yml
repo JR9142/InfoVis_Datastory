@@ -6,3 +6,4 @@ root: docs/notebook
 chapters:
 - file: docs/preprocess
 - file: docs/perspectief1
+- file: docs/perspectief2
