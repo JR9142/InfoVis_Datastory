@@ -5,3 +5,4 @@ format: jb-book
 root: docs/notebook
 chapters:
 - file: docs/preprocess
+- file: docs/perspectief1
