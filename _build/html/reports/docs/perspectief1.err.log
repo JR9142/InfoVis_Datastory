@@ -93,15 +93,15 @@ def update_chart(selected_countries):
     fig.update_layout(yaxis=dict(autorange=True))
     return fig
 
-
+#port = 0, auto pick an unused port
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False, port=8051)
+    app.run(debug=True, use_reloader=False, port=0)
 
 ------------------
 
 ----- stderr -----
 Address already in use
-Port 8051 is in use by another program. Either identify and stop that program, or start the server with a different port.
+Port 8050 is in use by another program. Either identify and stop that program, or start the server with a different port.
 ----- stderr -----
 /home/jason/miniconda3/envs/jupyterbook/lib/python3.10/site-packages/IPython/core/interactiveshell.py:3587: UserWarning:
 
