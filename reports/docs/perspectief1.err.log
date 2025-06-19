@@ -93,9 +93,9 @@ def update_chart(selected_countries):
     fig.update_layout(yaxis=dict(autorange=True))
     return fig
 
-
+#port = 0, auto pick an unused port
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False, port=0)
 
 ------------------
 
