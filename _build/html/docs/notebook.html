@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Criminaliteit en Welvaart &#8212; InfoVis_Datastory</title>
+    <title>Criminaliteit, voorkomen of bestrijden? &#8212; InfoVis_Datastory</title>
   
   
   
@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -171,13 +171,15 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    Criminaliteit en Welvaart
+                    Criminaliteit, voorkomen of bestrijden?
                 </a>
             </li>
         </ul>
         <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="preprocess.html">Data preprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="perspectief1.html">Minder misdaad door betere welvaartsverdeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="perspectief1.html">Minder misdaad door eerlijkere welvaartsverdeling</a></li>
+
+
 <li class="toctree-l1"><a class="reference internal" href="perspectief2.html">Minder misdaad door sterkere handhaving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="final.html">Reflectie</a></li>
 
@@ -398,7 +400,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Criminaliteit en Welvaart</h1>
+    <h1>Criminaliteit, voorkomen of bestrijden?</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -408,7 +410,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introductie">Introductie</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alternatief-van-technisch-rapport-overgenomen">Alternatief, van technisch rapport overgenomen:</a></li>
 </ul>
             </nav>
         </div>
@@ -420,11 +423,16 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="criminaliteit-en-welvaart">
-<h1>Criminaliteit en Welvaart<a class="headerlink" href="#criminaliteit-en-welvaart" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="criminaliteit-voorkomen-of-bestrijden">
+<h1>Criminaliteit, voorkomen of bestrijden?<a class="headerlink" href="#criminaliteit-voorkomen-of-bestrijden" title="Link to this heading">#</a></h1>
 <p>Student names: Chris Dukker, David Snoeks, Ryan Rodrigus, Jason Roes</p>
 <p>Team number: D2</p>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load image from link</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://ccv-secondant.nl/fileadmin/w/secondant_nl/platform/illustraties/Internationaal.jpg&#39;</span>
@@ -448,13 +456,21 @@ document.write(`
 </pre></div>
 </div>
 </div>
+</details>
 <div class="cell_output docutils container">
 <div class="output text_html"><img src="https://ccv-secondant.nl/fileadmin/w/secondant_nl/platform/illustraties/Internationaal.jpg" width="600" height="300"/></div></div>
 </div>
-<section id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<section id="introductie">
+<h2>Introductie<a class="headerlink" href="#introductie" title="Link to this heading">#</a></h2>
 <p>Europa is, over het algemeen genomen, welvarend. Meerdere van de sterkste economieën op aarde bevinden zich op dit continent, en de EU kan zich in economische termen meten aan andere grootmachten. Deze welvaart is alleen niet gelijkmatig verdeeld. Sommige landen zijn welvarender dan andere, maar ook binnen de landen bestaat er economische ongelijkheid doordat de welvaart verschillend is verdeeld. Ook zijn er verscillen in de criminaliteit. Landen hebben te kampen met verschillende hoeveelheden misdaad, en niet ieder land heeft last van dezelfde soorten criminaliteit. De vraag waar wij ons in dit datastory mee bezig houden is: is er een verband te vinden in (de verdeling van) welvaart van een land, en de hoeveelheid illegale activiteit in dit land?</p>
 <p>Met deze data story onderzoeken wij of welvaartsongelijkheid en het gemiddelde inkomen per persoon invloed hebben op de hoeveelheid gepleegde misdaden, en of deze variabelen een sterkere correlatie vertonen met bepaalde categorieën misdaad zoals moord, verkrachting, diefstal en fraude. Dit doen we met behulp van gegevens van World Bank Group over de GINI-coëfficient (een maatstaf voor inkomens- of vermogenongelijkheid) en economische statistieken en groei dataset van World Bank Open Data en de misdaadstatistieken dataset van Eurostat.</p>
+</section>
+<section id="alternatief-van-technisch-rapport-overgenomen">
+<h2>Alternatief, van technisch rapport overgenomen:<a class="headerlink" href="#alternatief-van-technisch-rapport-overgenomen" title="Link to this heading">#</a></h2>
+<p>Criminaliteit is een van de oudste en hardnekkigste problemen waarmee samenlevingen te maken hebben. De bestrijding ervan vormt een voortdurend punt van discussie in de politiek, waarbij partijen sterk verschillen in hun voorkeur voor de te hanteren aanpak. Grofweg kunnen deze benaderingen worden onderverdeeld in twee categorieën: het voorkomen van criminaliteit via economische maatregelen, en het terugdringen ervan door middel van strengere justitiële handha- ving.</p>
+<p>Intuïtief is het te begrijpen dat er een correlatie is tussen welvaart en criminaliteit. Als een deel van de bevolking in armoede leeft zonder een duidelijke manier op verbetering, zullen ze sneller naar illegale middelen grijpen om deze verbetering zelf in stand te brengen. Dit is waar de economische aanpak op inspeelt. Door deze kwetsbare bevolkingsgroep van steun te voorzien, zijn ze minder geneigd om (uit wanhoop) misdaden te plegen, aldus aanhangers van dit perspectief (Rudolph en Starke 2020).</p>
+<p>Een andere veelgenoemde strategie om criminaliteit tegen te gaan, is het aanscherpen van de wetshandhaving en het opleggen van strengere straffen. Ook deze aanpak is logisch te beredeneren: als de kans op bestraffing toeneemt en de straffen zwaarder worden, bijvoorbeeld door een grotere politie-inzet, zullen potentiële daders vaker concluderen dat de baten van een misdaad niet opwegen tegen de risico’s (Newburn 2007).</p>
+<p>In dit datastory hebben wij onderzocht welke van deze twee benaderingen effectiever is in het terugdringen van criminaliteit. Wegen economische omstandigheden zwaarder, of speelt juist de strengheid van wetgeving en handhaving een grotere rol? Wij gebruiken data van verschillende Europese landen om te zien welke maatregelen meer invloed lijken te heben:</p>
 </section>
 <div class="toctree-wrapper compound">
 </div>
@@ -515,7 +531,8 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introductie">Introductie</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alternatief-van-technisch-rapport-overgenomen">Alternatief, van technisch rapport overgenomen:</a></li>
 </ul>
   </nav></div>
 
