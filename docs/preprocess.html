@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -57,6 +57,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'docs/preprocess';</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -439,6 +441,7 @@ document.write(`
 <li><p>De dataset “Personnel in the criminal justice system by sex” hebben wij op dezelfde manier omgevormd zodat ieder beroep een eigen kolom kreeg.</p></li>
 <li><p>Wij hebben de andere twee datasets, “Economy &amp; Growth” en “World Bank, Poverty and Inequality Platform. (Gini Index)” omgevormd van ‘wide’ naar ‘long-format’.</p></li>
 <li><p>Wij hebben deze laatste twee databases gefilterd op jaar en land, zodat alleen de jaren en landen die voor komen in de EU database over blijven. Op deze manier kunnen we voor de EU landen correlaties tussen economische variabelen en verschillende soorten criminaliteit identificeren.</p></li>
+<li><p>We hebben verschillende kolommen hernoemd om leesbaarheid en gebruiksgemak te bevorderen. De kolommen “Geopolitical entity (reporting)” en “TIME_PERIOD” uit de EU datasets zijn hernoemd naar “Country Name” en “year”. De kolom “Unlawful acts involving controlled drugs or precursors” is hernoemd naar ‘drug-related crimes’.</p></li>
 </ol>
 </section>
 <section id="variabelen">
@@ -446,9 +449,42 @@ document.write(`
 <p>Wij hebben in dit datastory gebruik gemaakt van meerdere variabelen. Hieronder volgt een opsomming van de belangrijkste de variabelen die wij hebben gebruikt. Dit is niet een complete lijst.</p>
 <p>Continu/Ratio variabelen:</p>
 <ul class="simple">
-<li><p><strong>GDP, PPP  (current US$):</strong> <em>‘Gross Domestic Product, Purchasing Power Parity’</em>. Dit houdt in dat het nationale inkomen van een land (GDP) wordt aangepast aan de koopkracht (PPP) van dit land om accurater vergelijkingen te kunnen maken tussen verschillende landen. Voor dit datastory geldt dat (current US$) verwijst naar de constante waarde van US$ in 2024 zoals bepaald door World Bank Group.</p></li>
-<li><p>Gross national expenditure (current US$): Een benadering van het de totale uitgaven van de inwoners en overheid van een land.</p></li>
+<li><p><strong>GDP, PPP  (Constant 2021 international $):</strong> <em>‘Gross Domestic Product, Purchasing Power Parity’</em>. Dit houdt in dat het nationale inkomen van een land (GDP) wordt aangepast aan de koopkracht (PPP) van dit land om accurater vergelijkingen te kunnen maken tussen verschillende landen.</p></li>
+<li><p><strong>Gross national expenditure (current US$)</strong>: Een benadering van de som van de totale uitgaven van de inwoners en overheid van een land. Voor dit datastory geldt dat (current US$) verwijst naar de constante waarde van US$ in 2024 zoals bepaald door World Bank Group.</p></li>
+<li><p><strong>GNI per capita growth (annual %)</strong>: Gross National Income per capita:: een benadering van de som van alle winsten van de inwoners en overheid van een land, gedeeld door het aantal inwoners. Deze is gemeten als percentuele groei t.o.v. het vorige jaar.</p></li>
+<li><p><strong>Gini-index</strong>: Een manier om de inkomstongelijkheid in een land in een getal te vatten. Er zijn verschillende manieren om deze te bepalen, maar hier onder is de formule die gebruik maakt van de Lorenz-curve. Dit is een manier om inkomstongelijkheid te visualiseren. Deze formule bepaald de oppervlakte onder de Lorenz-curve op een punt p, oftewel welk deel van de totale welvaart door het rijkste <span class="math notranslate nohighlight">\(p\)</span> deel van de bevolking is.</p></li>
 </ul>
+<p><span class="math notranslate nohighlight">\(G = 1 - 2 \int_0^1 L(p) dp\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load image from link</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://upload.wikimedia.org/wikipedia/commons/5/5b/Economics_Gini_coefficient.svg&#39;</span>
+
+<span class="c1"># Display image from URL with smaller size and subtitle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+
+<span class="c1"># Set the desired image width and height</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">height</span> <span class="o">=</span> <span class="mi">300</span>
+
+<span class="c1"># Set the subtitle text</span>
+<span class="n">subtitle</span> <span class="o">=</span> <span class="s2">&quot;Lorenz curve, a way to visualize income inequality. From Wikimedia Commons.&quot;</span>
+
+<span class="c1"># Create an Image instance with the URL</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+
+<span class="c1"># Display the image and subtitle</span>
+<span class="n">display</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">subtitle</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Economics_Gini_coefficient.svg" width="300" height="300"/></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lorenz curve, a way to visualize income inequality. From Wikimedia Commons.
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 <section id="gebruikte-code">
 <h2>Gebruikte code<a class="headerlink" href="#gebruikte-code" title="Link to this heading">#</a></h2>
@@ -514,6 +550,9 @@ document.write(`
         <span class="n">values</span><span class="o">=</span><span class="s1">&#39;OBS_VALUE&#39;</span>
     <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
+    <span class="n">pivot_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Unlawful acts involving controlled drugs or precursors&quot;</span><span class="p">:</span><span class="s2">&quot;Drug-related crimes&quot;</span>
+    <span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pivot_df</span>
 
 <span class="c1"># Usage</span>
