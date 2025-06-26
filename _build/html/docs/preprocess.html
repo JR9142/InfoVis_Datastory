@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -452,10 +452,15 @@ document.write(`
 <li><p><strong>GDP, PPP  (Constant 2021 international $):</strong> <em>‘Gross Domestic Product, Purchasing Power Parity’</em>. Dit houdt in dat het nationale inkomen van een land (GDP) wordt aangepast aan de koopkracht (PPP) van dit land om accurater vergelijkingen te kunnen maken tussen verschillende landen.</p></li>
 <li><p><strong>Gross national expenditure (current US$)</strong>: Een benadering van de som van de totale uitgaven van de inwoners en overheid van een land. Voor dit datastory geldt dat (current US$) verwijst naar de constante waarde van US$ in 2024 zoals bepaald door World Bank Group.</p></li>
 <li><p><strong>GNI per capita growth (annual %)</strong>: Gross National Income per capita:: een benadering van de som van alle winsten van de inwoners en overheid van een land, gedeeld door het aantal inwoners. Deze is gemeten als percentuele groei t.o.v. het vorige jaar.</p></li>
-<li><p><strong>Gini-index</strong>: Een manier om de inkomstongelijkheid in een land in een getal te vatten. Er zijn verschillende manieren om deze te bepalen, maar hier onder is de formule die gebruik maakt van de Lorenz-curve. Dit is een manier om inkomstongelijkheid te visualiseren. Deze formule bepaald de oppervlakte onder de Lorenz-curve op een punt p, oftewel welk deel van de totale welvaart door het rijkste <span class="math notranslate nohighlight">\(p\)</span> deel van de bevolking is.</p></li>
+<li><p><strong>Gini-index</strong>: Een manier om de inkomstongelijkheid in een land in een getal te vatten. Er zijn verschillende manieren om deze te bepalen, maar hier onder is de formule die gebruik maakt van de Lorenz-curve. Dit is een manier om inkomstongelijkheid te visualiseren. Deze formule bepaald de oppervlakte onder de Lorenz-curve op een punt p, oftewel welk deel van de totale welvaart van het rijkste <span class="math notranslate nohighlight">\(p\)</span> deel van de bevolking is.</p></li>
 </ul>
 <p><span class="math notranslate nohighlight">\(G = 1 - 2 \int_0^1 L(p) dp\)</span></p>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load image from link</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://upload.wikimedia.org/wikipedia/commons/5/5b/Economics_Gini_coefficient.svg&#39;</span>
@@ -468,7 +473,7 @@ document.write(`
 <span class="n">height</span> <span class="o">=</span> <span class="mi">300</span>
 
 <span class="c1"># Set the subtitle text</span>
-<span class="n">subtitle</span> <span class="o">=</span> <span class="s2">&quot;Lorenz curve, a way to visualize income inequality. From Wikimedia Commons.&quot;</span>
+<span class="n">subtitle</span> <span class="o">=</span> <span class="s2">&quot;The Lorenz curve, a way to visualize income inequality. From Wikimedia Commons.&quot;</span>
 
 <span class="c1"># Create an Image instance with the URL</span>
 <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
@@ -479,8 +484,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
+</details>
 <div class="cell_output docutils container">
-<div class="output text_html"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Economics_Gini_coefficient.svg" width="300" height="300"/></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lorenz curve, a way to visualize income inequality. From Wikimedia Commons.
+<div class="output text_html"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Economics_Gini_coefficient.svg" width="300" height="300"/></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Lorenz curve, a way to visualize income inequality. From Wikimedia Commons.
 </pre></div>
 </div>
 </div>
